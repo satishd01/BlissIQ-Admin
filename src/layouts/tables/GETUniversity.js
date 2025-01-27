@@ -5,12 +5,12 @@ import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -79,9 +79,9 @@ export default function UniversityTable() {
     const confirmDelete = window.confirm("Are you sure you want to delete this university?");
     if (confirmDelete) {
       try {
-        console.log({id})
+        console.log({ id });
         const response = await axios.delete(`https://api.blissiq.cloud/admin/university/${id}`);
-        
+
         // Log the response for debugging
         console.log(response.data);
 
@@ -133,11 +133,18 @@ export default function UniversityTable() {
       );
 
       if (response.data.success) {
-        setUniversities(universities.map((uni) =>
-          uni.id === currentUniversity.id
-            ? { ...uni, name: currentUniversity.name, address: currentUniversity.address, isActive: currentUniversity.isActive }
-            : uni
-        ));
+        setUniversities(
+          universities.map((uni) =>
+            uni.id === currentUniversity.id
+              ? {
+                  ...uni,
+                  name: currentUniversity.name,
+                  address: currentUniversity.address,
+                  isActive: currentUniversity.isActive,
+                }
+              : uni
+          )
+        );
         alert("University updated successfully!");
         handleCloseModal();
       } else {
@@ -238,7 +245,9 @@ export default function UniversityTable() {
           }}
         >
           <form onSubmit={handleFormSubmit}>
-            <MDTypography variant="h5" gutterBottom>Update University</MDTypography>
+            <MDTypography variant="h5" gutterBottom>
+              Update University
+            </MDTypography>
             <TextField
               fullWidth
               label="Name"
@@ -256,7 +265,12 @@ export default function UniversityTable() {
               margin="normal"
             />
             <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton variant="outlined" color="secondary" onClick={handleCloseModal} style={{ marginRight: "8px" }}>
+              <MDButton
+                variant="outlined"
+                color="secondary"
+                onClick={handleCloseModal}
+                style={{ marginRight: "8px" }}
+              >
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">

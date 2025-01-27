@@ -6,16 +6,16 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import Sidenav from "examples/Sidenav"; // Sidebar component
 import Configurator from "examples/Configurator";
 
-// Material Dashboard 2 React themes
+// BLISSIQ ADMIN React themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
 
-// Material Dashboard 2 React Dark Mode themes
+// BLISSIQ ADMIN React Dark Mode themes
 import themeDark from "assets/theme-dark";
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
 
@@ -24,10 +24,10 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
-// Material Dashboard 2 React routes
+// BLISSIQ ADMIN React routes
 import routes from "routes";
 
-// Material Dashboard 2 React contexts
+// BLISSIQ ADMIN React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
 
 // Images
@@ -150,19 +150,24 @@ export default function App() {
             <Sidenav
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="Blissiq Admin"
+              brandName="BLISSIQ ADMIN"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
             <Configurator />
-            {configsButton}
+            {/* {configsButton} */}
           </>
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
           {getRoutes(routes)}
-          <Route exact path="/templete-screens/:templateType" element={<TempletesScreen />} key="templete-screens" />
+          <Route
+            exact
+            path="/templete-screens/:templateType"
+            element={<TempletesScreen />}
+            key="templete-screens"
+          />
           <Route path="/grades/create" element={<CreateGrade />} />
           <Route path="/grades" element={<GetGrades />} />
           <Route path="/grades/update/:id" element={<UpdateGrade />} />
@@ -181,19 +186,24 @@ export default function App() {
           <Sidenav
             color={sidenavColor}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Material Dashboard 2"
+            brandName="BLISSIQ ADMIN"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
           <Configurator />
-          {configsButton}
+          {/* {configsButton} */}
         </>
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route exact path="/templete-screens/:templateType" element={<TempletesScreen />} key="templete-screens" />
+        <Route
+          exact
+          path="/templete-screens/:templateType"
+          element={<TempletesScreen />}
+          key="templete-screens"
+        />
         <Route path="/grades/create" element={<CreateGrade />} />
         <Route path="/grades" element={<GetGrades />} />
         <Route path="/grades/update/:id" element={<UpdateGrade />} />

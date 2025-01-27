@@ -5,7 +5,7 @@ import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
@@ -82,15 +82,16 @@ export default function GradeTable() {
     if (!currentGrade) return;
 
     try {
-      const response = await axios.put(
-        `https://api.blissiq.cloud/admin/grade/${currentGrade.id}`,
-        { name: currentGrade.name }
-      );
+      const response = await axios.put(`https://api.blissiq.cloud/admin/grade/${currentGrade.id}`, {
+        name: currentGrade.name,
+      });
 
       if (response.data.success) {
-        setGrades(grades.map((grade) =>
-          grade.id === currentGrade.id ? { ...grade, name: currentGrade.name } : grade
-        ));
+        setGrades(
+          grades.map((grade) =>
+            grade.id === currentGrade.id ? { ...grade, name: currentGrade.name } : grade
+          )
+        );
         alert("Grade updated successfully!");
         handleCloseModal();
       } else {
@@ -112,7 +113,11 @@ export default function GradeTable() {
   }, [searchUniversityId]); // Fetch grades whenever searchUniversityId changes
 
   if (loading) {
-    return <MDTypography variant="h6" color="text">Loading...</MDTypography>;
+    return (
+      <MDTypography variant="h6" color="text">
+        Loading...
+      </MDTypography>
+    );
   }
 
   // Columns structure for the grades table (same as University Table)
@@ -217,7 +222,9 @@ export default function GradeTable() {
           }}
         >
           <form onSubmit={handleFormSubmit}>
-            <MDTypography variant="h5" gutterBottom>Update Grade</MDTypography>
+            <MDTypography variant="h5" gutterBottom>
+              Update Grade
+            </MDTypography>
             <TextField
               fullWidth
               label="Name"
@@ -227,7 +234,12 @@ export default function GradeTable() {
               margin="normal"
             />
             <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton variant="outlined" color="secondary" onClick={handleCloseModal} style={{ marginRight: "8px" }}>
+              <MDButton
+                variant="outlined"
+                color="secondary"
+                onClick={handleCloseModal}
+                style={{ marginRight: "8px" }}
+              >
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">

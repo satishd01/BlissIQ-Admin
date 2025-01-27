@@ -11,12 +11,12 @@ import Tab from "@mui/material/Tab";
 import IconButton from "@mui/material/IconButton";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 
-// Material Dashboard 2 React base styles
+// BLISSIQ ADMIN React base styles
 import breakpoints from "assets/theme/base/breakpoints";
 
 // Images

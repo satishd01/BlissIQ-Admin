@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Material Dashboard 2 React - v2.2.0
+* BLISSIQ ADMIN React - v2.2.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-dashboard-react
@@ -20,11 +20,11 @@ import PropTypes from "prop-types";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// Material Dashboard 2 React base styles
+// BLISSIQ ADMIN React base styles
 import typography from "assets/theme/base/typography";
 
 function Footer({ company, links }) {
@@ -100,12 +100,7 @@ function Footer({ company, links }) {
 // Setting default values for the props of Footer
 Footer.defaultProps = {
   company: { name: "BLISSIQ" },
-  links: [
-    {  name: "Creative Tim" },
-    {  name: "About Us" },
-    {  name: "Blog" },
-    { name: "License" },
-  ],
+  links: [],
 };
 
 // Typechecking props for the Footer

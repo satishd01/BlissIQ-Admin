@@ -5,12 +5,12 @@ import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -87,11 +87,13 @@ export default function GetSubjects() {
       );
 
       if (response.data.success) {
-        setSubjects(subjects.map((sub) =>
-          sub.id === currentSubject.id
-            ? { ...sub, name: currentSubject.name, code: currentSubject.code }
-            : sub
-        ));
+        setSubjects(
+          subjects.map((sub) =>
+            sub.id === currentSubject.id
+              ? { ...sub, name: currentSubject.name, code: currentSubject.code }
+              : sub
+          )
+        );
         alert("Subject updated successfully!");
         handleCloseModal();
       } else {
@@ -114,7 +116,11 @@ export default function GetSubjects() {
   }, [searchUniversityId, searchGradeId]);
 
   if (loading) {
-    return <MDTypography variant="h6" color="text">Loading...</MDTypography>;
+    return (
+      <MDTypography variant="h6" color="text">
+        Loading...
+      </MDTypography>
+    );
   }
 
   // Columns structure for the subjects table (same as University Table)
@@ -213,7 +219,9 @@ export default function GetSubjects() {
           }}
         >
           <form onSubmit={handleFormSubmit}>
-            <MDTypography variant="h5" gutterBottom>Update Subject</MDTypography>
+            <MDTypography variant="h5" gutterBottom>
+              Update Subject
+            </MDTypography>
             <TextField
               fullWidth
               label="Name"
@@ -231,7 +239,12 @@ export default function GetSubjects() {
               margin="normal"
             />
             <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton variant="outlined" color="secondary" onClick={handleCloseModal} style={{ marginRight: "8px" }}>
+              <MDButton
+                variant="outlined"
+                color="secondary"
+                onClick={handleCloseModal}
+                style={{ marginRight: "8px" }}
+              >
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">

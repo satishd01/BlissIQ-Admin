@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; // to get the id from URL
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
@@ -26,12 +26,18 @@ export default function GetUniversityById() {
   }, [id]);
 
   if (!university) {
-    return <MDTypography variant="h6" color="text">Loading...</MDTypography>;
+    return (
+      <MDTypography variant="h6" color="text">
+        Loading...
+      </MDTypography>
+    );
   }
 
   return (
     <MDBox>
-      <MDTypography variant="h4" color="primary">{university.name}</MDTypography>
+      <MDTypography variant="h4" color="primary">
+        {university.name}
+      </MDTypography>
       <MDTypography variant="body1">{university.address}</MDTypography>
       <MDTypography variant="body1">{university.isActive ? "Active" : "Inactive"}</MDTypography>
     </MDBox>

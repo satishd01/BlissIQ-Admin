@@ -5,13 +5,17 @@ import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -28,17 +32,66 @@ function CreateSession() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(""); // State to store message
   const [messageType, setMessageType] = useState(""); // State to store message type (success/error)
+  const [file, setFile] = useState(null); // State to store the file for ppt
 
   const navigate = useNavigate(); // Hook to navigate
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === "type" && e.target.value === "pptx") {
+      // Reset the file if type changes to pptx
+      setFile(null);
+      setFormData((prevData) => ({ ...prevData, URL: "" }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]); // Store the selected file
+  };
+
+  const uploadPpt = async () => {
+    if (!file) return; // If no file is selected, return
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("https://api.blissiq.cloud/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        // Set the URL field with the file URL from the upload response
+        setFormData((prevData) => ({
+          ...prevData,
+          URL: `https://api.blissiq.cloud${data.fileUrl}`, // Attach the base URL to the file URL
+        }));
+        setMessageType("success");
+        setMessage("PPT uploaded successfully.");
+      } else {
+        setMessageType("error");
+        setMessage("Failed to upload PPT. Please try again.");
+      }
+    } catch (error) {
+      setMessageType("error");
+      setMessage("An error occurred while uploading the PPT.");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage(""); // Clear any previous messages
+
+    if (formData.type === "pptx" && !formData.URL) {
+      setMessageType("error");
+      setMessage("Please upload a PPT file first.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("https://api.blissiq.cloud/session/", {
@@ -54,13 +107,13 @@ function CreateSession() {
       // Checking if the response status is "success"
       if (data.success) {
         setMessageType("success");
-        setMessage(data.message || "Video added successfully for A1!");
+        setMessage(data.message || "Session created successfully!");
         setTimeout(() => {
           navigate("/Get-session");
         }, 1000);
       } else {
         setMessageType("error");
-        setMessage(data.message || "Failed to add video. Please try again.");
+        setMessage(data.message || "Failed to create session. Please try again.");
       }
     } catch (error) {
       setMessageType("error");
@@ -129,32 +182,54 @@ function CreateSession() {
                       />
                     </Grid>
                     <Grid item xs={12}>
+                      <FormControl fullWidth variant="outlined">
+                        <InputLabel>Type</InputLabel>
+                        <Select
+                          name="type"
+                          value={formData.type}
+                          onChange={handleChange}
+                          required
+                          label="Type"
+                          sx={{ padding: "12px 14px" }} // Add padding to make it the same as other fields
+                        >
+                          <MenuItem value="video">Video</MenuItem>
+                          <MenuItem value="pptx">pptx</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    {formData.type === "pptx" && (
+                      <Grid item xs={12}>
+                        <input
+                          type="file"
+                          onChange={handleFileChange}
+                          accept=".pptx"
+                          style={{ width: "100%" }} // Ensure file input spans full width
+                        />
+                        {file && (
+                          <MDButton onClick={uploadPpt} variant="gradient" color="info" fullWidth>
+                            Upload PPT
+                          </MDButton>
+                        )}
+                      </Grid>
+                    )}
+                    <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Video URL"
+                        label="URL"
                         variant="outlined"
                         name="URL"
                         value={formData.URL}
                         onChange={handleChange}
                         required
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Type"
-                        variant="outlined"
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        disabled
+                        disabled={formData.type === "pptx"} // Disable for PPTX type, as URL is filled automatically
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <MDButton
                         type="submit"
                         variant="gradient"
-                        color="info" // This will give a blue color
+                        color="info"
                         fullWidth
                         disabled={loading}
                       >

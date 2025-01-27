@@ -11,13 +11,17 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -190,15 +194,23 @@ function GetSessions() {
                       />
                     </Grid>
                     <Grid item xs={3}>
-                      <TextField
-                        fullWidth
-                        label="Type"
-                        variant="outlined"
-                        name="type"
-                        value={searchParams.type}
-                        onChange={handleChange}
-                      />
+                      <FormControl fullWidth variant="outlined" sx={{ padding: "8px" }}>
+                        <InputLabel>Type</InputLabel>
+                        <Select
+                          name="type"
+                          value={searchParams.type}
+                          onChange={handleChange}
+                          label="Type"
+                          sx={{
+                            padding: "10px", // Increase padding here
+                          }}
+                        >
+                          <MenuItem value="video">Video</MenuItem>
+                          <MenuItem value="pptx">pptx</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={3}>
                       <MDButton
                         variant="gradient"

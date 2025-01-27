@@ -3,32 +3,30 @@ import { useEffect, useState } from "react";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import Button from "@mui/material/Button"; // Import MUI Button
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 function Students() {
-  // State to store student data and loading state
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetching student data from the API
     const fetchStudents = async () => {
       try {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/student");
         const data = await response.json();
 
-        // Access the 'data' key from the response object
         if (data && data.success) {
-          setStudents(data.data); // Assuming the students array is in the 'data' key
+          setStudents(data.data);
         } else {
           console.error("No student data found in the response.");
         }
@@ -42,7 +40,34 @@ function Students() {
     fetchStudents();
   }, []);
 
-  // If still loading, show a loading indicator
+  const toggleActiveState = async (studentId, currentState) => {
+    try {
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin.active-deactive/student/${studentId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isActive: !currentState }),
+        }
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        setStudents((prevStudents) =>
+          prevStudents.map((student) =>
+            student.id === studentId ? { ...student, isActive: result.data.isActive } : student
+          )
+        );
+      } else {
+        console.error("Failed to update student status:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating student status:", error);
+    }
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -74,7 +99,6 @@ function Students() {
     );
   }
 
-  // Columns structure based on student data
   const columns = [
     { Header: "Name", accessor: "name" },
     { Header: "Phone", accessor: "phone" },
@@ -86,7 +110,22 @@ function Students() {
     {
       Header: "Active",
       accessor: "isActive",
-      Cell: ({ value }) => (value ? "Active" : "Inactive"),
+      Cell: ({ row }) => (
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: row.original.isActive ? "#4CAF50" : "#F44336",
+            color: "white",
+            "&:hover": {
+              backgroundColor: row.original.isActive ? "#4caf50" : "#f44336",
+              fontWeight: "bold",
+            },
+          }}
+          onClick={() => toggleActiveState(row.original.id, row.original.isActive)}
+        >
+          {row.original.isActive ? "Active" : "Inactive"}
+        </Button>
+      ),
     },
   ];
 

@@ -3,19 +3,19 @@ import { useEffect, useState } from "react";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// Material Dashboard 2 React example components
+// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 function Teachers() {
-  // State to store teacher data and loading state
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,9 +26,8 @@ function Teachers() {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/teacher");
         const data = await response.json();
 
-        // Access the 'data' key from the response object
         if (data && data.success) {
-          setTeachers(data.data); // Assuming the teachers array is in the 'data' key
+          setTeachers(data.data);
         } else {
           console.error("No teacher data found in the response.");
         }
@@ -41,6 +40,36 @@ function Teachers() {
 
     fetchTeachers();
   }, []);
+
+  // Toggle the active state of a teacher
+  const toggleActiveState = async (teacherId, currentState) => {
+    try {
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin.active-deactive/teacher/${teacherId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isActive: !currentState }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setTeachers((prevTeachers) =>
+          prevTeachers.map((teacher) =>
+            teacher.id === teacherId ? { ...teacher, isActive: result.data.isActive } : teacher
+          )
+        );
+      } else {
+        console.error("Failed to update teacher status:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating teacher status:", error);
+    }
+  };
 
   // If still loading, show a loading indicator
   if (loading) {
@@ -85,7 +114,22 @@ function Teachers() {
     {
       Header: "Active",
       accessor: "isActive",
-      Cell: ({ value }) => (value ? "Active" : "Inactive"),
+      Cell: ({ row }) => (
+        <Button
+          variant="contained"
+          size="small"
+          sx={{
+            backgroundColor: row.original.isActive ? "#4CAF50" : "#F44336", // Green for Active, Red for Inactive
+            color: "white",
+            "&:hover": {
+              backgroundColor: row.original.isActive ? "#388E3C" : "#D32F2F", // Darker on hover
+            },
+          }}
+          onClick={() => toggleActiveState(row.original.id, row.original.isActive)}
+        >
+          {row.original.isActive ? "Active" : "Inactive"}
+        </Button>
+      ),
     },
   ];
 

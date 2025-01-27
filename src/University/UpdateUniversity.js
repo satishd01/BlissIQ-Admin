@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
@@ -50,7 +50,11 @@ export default function UpdateUniversity() {
   };
 
   if (loading) {
-    return <MDTypography variant="h6" color="text">Loading...</MDTypography>;
+    return (
+      <MDTypography variant="h6" color="text">
+        Loading...
+      </MDTypography>
+    );
   }
 
   return (
@@ -96,7 +100,9 @@ export default function UpdateUniversity() {
           </MDButton>
         </>
       ) : (
-        <MDTypography variant="h6" color="error">University not found</MDTypography>
+        <MDTypography variant="h6" color="error">
+          University not found
+        </MDTypography>
       )}
     </MDBox>
   );

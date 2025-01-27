@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom"; // Use useNavigate
 
-// Material Dashboard 2 React components
+// BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
@@ -40,7 +40,11 @@ export default function DeleteUniversity() {
   };
 
   if (loading) {
-    return <MDTypography variant="h6" color="text">Loading...</MDTypography>;
+    return (
+      <MDTypography variant="h6" color="text">
+        Loading...
+      </MDTypography>
+    );
   }
 
   return (
@@ -52,10 +56,14 @@ export default function DeleteUniversity() {
         <>
           <MDTypography variant="h6">Are you sure you want to delete:</MDTypography>
           <MDTypography variant="h6">{university.name}</MDTypography>
-          <MDButton color="error" onClick={handleDelete}>Delete</MDButton>
+          <MDButton color="error" onClick={handleDelete}>
+            Delete
+          </MDButton>
         </>
       ) : (
-        <MDTypography variant="h6" color="error">University not found</MDTypography>
+        <MDTypography variant="h6" color="error">
+          University not found
+        </MDTypography>
       )}
     </MDBox>
   );

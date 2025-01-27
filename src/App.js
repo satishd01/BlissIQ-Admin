@@ -33,7 +33,6 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
-import brand from "assets/images/logos/logo.png";
 import { TempletesScreen } from "layouts/templetes";
 
 // Import Grades components
@@ -150,7 +149,7 @@ export default function App() {
           <>
             <Sidenav
               color={sidenavColor}
-              brand={brand}
+              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
               brandName="BLISSIQ ADMIN"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}

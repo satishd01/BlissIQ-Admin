@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-// BLISSIQ ADMIN React components
+// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { Select, MenuItem, FormControl, InputLabel, CircularProgress } from "@mui/material";
 
-// BLISSIQ ADMIN React example components
+// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -22,30 +23,70 @@ export function TempletesScreen() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalEntries, setTotalEntries] = useState(0);
+  const [filters, setFilters] = useState({
+    university: "",
+    subject: "",
+    grade: "",
+  });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [universities, setUniversities] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [grades, setGrades] = useState([]);
 
+  // Function to fetch data from the server
+  const fetchData = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/learningPath.list/${templateType}?page=${page + 1}&limit=${rowsPerPage}&university=${filters.university}&subject=${filters.subject}&grade=${filters.grade}`
+    );
+    const result = await response.json();
+
+    setData(result.data); // Assumes result contains 'data' and 'totalEntries'
+    setTotalEntries(result.totalRecords);
+  };
+
+  // Function to fetch dropdown options (university, subject, grade)
+  const fetchDropdownOptions = async () => {
+    setLoading(true);
+    try {
+      const [universityRes, subjectRes, gradeRes] = await Promise.all([
+        fetch(`${process.env.REACT_APP_API_URL}/admin/university`), // Replace with actual API for universities
+        fetch(`${process.env.REACT_APP_API_URL}/admin/subject`), // Replace with actual API for subjects
+        fetch(`${process.env.REACT_APP_API_URL}/admin/grade`), // Replace with actual API for grades
+      ]);
+
+      const [universityData, subjectData, gradeData] = await Promise.all([
+        universityRes.json(),
+        subjectRes.json(),
+        gradeRes.json(),
+      ]);
+
+      setUniversities(universityData.data);
+      setSubjects(subjectData.data);
+      setGrades(gradeData.data);
+    } catch (error) {
+      console.error("Error fetching dropdown data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect hook to fetch data when page, filters or rowsPerPage change
   useEffect(() => {
-    const fetchTemplateData = async () => {
-      try {
-        // const config = TEMPLET_SCREEN_CONFIG[templateType];
-        // if (!config) {
-        //   throw new Error("Invalid template type");
-        // }
-        // const response = await fetch(config.apiEndpoint);
-        // const result = await response.json();
-        // if (result && result.success) {
-        //   setData(result.data);
-        // } else {
-        //   throw new Error("No data found in the response");
-        // }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchData();
+  }, [page, rowsPerPage, filters]);
 
-    fetchTemplateData();
-  }, [templateType]);
+  // Effect hook to fetch dropdown options
+  useEffect(() => {
+    fetchDropdownOptions();
+  }, []);
+
+  // Handle filter change
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
 
   if (loading) {
     return (
@@ -147,20 +188,99 @@ export function TempletesScreen() {
                 />
               </div>
 
-              {/* <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
-                <MDBox sx={{ flex: 1, overflow: "auto" }}>
-                  <DataTable
-                    table={{
-                      columns: templateConfig.columns,
-                      rows: data,
-                    }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
+              <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
+                {/* Filters */}
+                <MDBox sx={{ display: "flex", gap: 3, justifyContent: "space-between" }}>
+                  {/* University Filter */}
+                  <FormControl sx={{ width: "30%" }}>
+                    <InputLabel>University</InputLabel>
+                    <Select
+                      name="university"
+                      value={filters.university}
+                      onChange={handleFilterChange}
+                      label="University"
+                      displayEmpty
+                    >
+                      <MenuItem value="">
+                        <em>All</em>
+                      </MenuItem>
+                      {universities.map((university) => (
+                        <MenuItem key={university.id} value={university.id}>
+                          {university.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {/* Subject Filter */}
+                  <FormControl sx={{ width: "30%" }}>
+                    <InputLabel>Subject</InputLabel>
+                    <Select
+                      name="subject"
+                      value={filters.subject}
+                      onChange={handleFilterChange}
+                      label="Subject"
+                      displayEmpty
+                    >
+                      <MenuItem value="">
+                        <em>All</em>
+                      </MenuItem>
+                      {subjects.map((subject) => (
+                        <MenuItem key={subject.id} value={subject.id}>
+                          {subject.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {/* Grade Filter */}
+                  <FormControl sx={{ width: "30%" }}>
+                    <InputLabel>Grade</InputLabel>
+                    <Select
+                      name="grade"
+                      value={filters.grade}
+                      onChange={handleFilterChange}
+                      label="Grade"
+                      displayEmpty
+                    >
+                      <MenuItem value="">
+                        <em>All</em>
+                      </MenuItem>
+                      {grades.map((grade) => (
+                        <MenuItem key={grade.id} value={grade.id}>
+                          {grade.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </MDBox>
-              </MDBox> */}
+
+                {/* Loading Indicator */}
+                {loading && (
+                  <MDBox sx={{ display: "flex", justifyContent: "center", padding: 2 }}>
+                    <CircularProgress />
+                  </MDBox>
+                )}
+
+                {/* Table */}
+                {!loading && (
+                  <MDBox sx={{ flex: 1, overflow: "auto" }}>
+                    <DataTable
+                      table={{
+                        columns: templateConfig.columns, // Use your predefined columns config
+                        rows: data,
+                      }}
+                      isSorted={false}
+                      entriesPerPage={false}
+                      showTotalEntries={true}
+                      totalEntries={totalEntries} // Display the total entries count
+                      onPageChange={(newPage) => setPage(newPage)}
+                      onRowsPerPageChange={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
+                      noEndBorder
+                    />
+                  </MDBox>
+                )}
+              </MDBox>
             </Card>
           </Grid>
         </Grid>

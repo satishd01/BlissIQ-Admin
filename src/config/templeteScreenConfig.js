@@ -4,8 +4,68 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Match Sound To Number",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "ID",
+        accessor: "id",
+        type: "string",
+      },
+      {
+        Header: "Index",
+        accessor: "index",
+        type: "number",
+      },
+      {
+        Header: "Points",
+        accessor: "points",
+        type: "number",
+      },
+      {
+        Header: "Key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "English Question",
+        accessor: "engQuestion",
+        type: "string",
+      },
+      {
+        Header: "Hindi Question",
+        accessor: "hinQuestion",
+        type: "string",
+      },
+      {
+        Header: "Options",
+        accessor: "options",
+        type: "json", // For JSON data
+      },
+      {
+        Header: "Answers",
+        accessor: "answers",
+        type: "json", // For JSON data
+      },
+      {
+        Header: "University",
+        accessor: "University.name",
+        type: "string",
+      },
+      {
+        Header: "Subject",
+        accessor: "Subject.name",
+        type: "string",
+      },
+      {
+        Header: "Grade",
+        accessor: "Grade.name",
+        type: "string",
+      },
+      {
+        Header: "Created At",
+        accessor: "createdAt",
+        type: "string",
+      },
+      {
+        Header: "Updated At",
+        accessor: "updatedAt",
         type: "string",
       },
     ],
@@ -18,8 +78,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "MCQ Grids",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -32,8 +92,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Sound To Image",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -46,8 +106,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Number Reorder",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -60,8 +120,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Number ASC DES",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -74,8 +134,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Number ASC DES",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -88,8 +148,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Learning Number",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -102,8 +162,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Fill Alphabet",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],
@@ -116,8 +176,8 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Alphabet Lettor to Letter",
     columns: [
       {
-        th: "Question",
-        td: "aa",
+        Header: "Question",
+        accessor: "aa",
         type: "string",
       },
     ],

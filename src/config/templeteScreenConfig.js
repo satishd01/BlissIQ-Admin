@@ -3,26 +3,12 @@ export const TEMPLET_SCREEN_CONFIG = {
     key: "numberS2NTemplate",
     header: "Match Sound To Number",
     columns: [
-      {
-        Header: "ID",
-        accessor: "id",
-        type: "string",
-      },
-      {
-        Header: "Index",
-        accessor: "index",
-        type: "number",
-      },
-      {
-        Header: "Points",
-        accessor: "points",
-        type: "number",
-      },
-      {
-        Header: "Key",
-        accessor: "key",
-        type: "string",
-      },
+      // {
+      //   Header: "ID",
+      //   accessor: "id",
+      //   type: "string",
+      // },
+      
       {
         Header: "English Question",
         accessor: "engQuestion",
@@ -37,11 +23,13 @@ export const TEMPLET_SCREEN_CONFIG = {
         Header: "Options",
         accessor: "options",
         type: "json", // For JSON data
+        Cell: ({ value }) => renderJsonCell(value, 'array')
       },
       {
         Header: "Answers",
         accessor: "answers",
         type: "json", // For JSON data
+        Cell: ({ value }) => renderJsonCell(value, 'array')
       },
       {
         Header: "University",
@@ -58,16 +46,16 @@ export const TEMPLET_SCREEN_CONFIG = {
         accessor: "Grade.name",
         type: "string",
       },
-      {
-        Header: "Created At",
-        accessor: "createdAt",
-        type: "string",
-      },
-      {
-        Header: "Updated At",
-        accessor: "updatedAt",
-        type: "string",
-      },
+      // {
+      //   Header: "Created At",
+      //   accessor: "createdAt",
+      //   type: "string",
+      // },
+      // {
+      //   Header: "Updated At",
+      //   accessor: "updatedAt",
+      //   type: "string",
+      // },
     ],
     importSampleFile:
       "https://docs.google.com/spreadsheets/d/1BXPXNDXQBD57MWlNjKDrTXHpMF2tbbfCKRJogwT4VF8/edit?usp=drive_link",
@@ -185,4 +173,37 @@ export const TEMPLET_SCREEN_CONFIG = {
       "https://docs.google.com/spreadsheets/d/1m7phWjHexIXj64lILs9yXUS6CilrqAKD23TVBrUM5dc/edit?gid=0#gid=0",
     icon: "rule",
   },
+};
+
+
+const renderJsonCell = (value, type = "default") => {
+  if (!value) return "-";
+
+  try {
+    const data = typeof value === "string" ? JSON.parse(value) : value;
+
+    switch (type) {
+      case "object":
+        return (
+          <div style={{ whiteSpace: "pre-wrap", maxWidth: "200px" }}>
+            {Object.entries(data).map(([key, val]) => (
+              <div key={key}>
+                <strong>{key}:</strong> {val}
+              </div>
+            ))}
+          </div>
+        );
+
+      case "array":
+        if (Array.isArray(data)) {
+          return <div style={{ whiteSpace: "pre-wrap" }}>{"["}{data.join(", ")}{"]"}</div>;
+        }
+        return <div style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(data, null, 2)}</div>;
+
+      default:
+        return <div style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(data, null, 2)}</div>;
+    }
+  } catch (error) {
+    return "Invalid JSON";
+  }
 };

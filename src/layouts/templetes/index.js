@@ -7,7 +7,14 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import { Select, MenuItem, FormControl, InputLabel, CircularProgress } from "@mui/material";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  CircularProgress,
+  TablePagination,
+} from "@mui/material";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -34,6 +41,8 @@ export function TempletesScreen() {
   const [universities, setUniversities] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
+  const recordsPerPageOptions = [10];
+  const showFilter = false
 
   // Function to fetch data from the server
   const fetchData = async () => {
@@ -46,6 +55,14 @@ export function TempletesScreen() {
     setTotalEntries(result.totalRecords);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   // Function to fetch dropdown options (university, subject, grade)
   const fetchDropdownOptions = async () => {
     setLoading(true);
@@ -87,37 +104,6 @@ export function TempletesScreen() {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
-
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <MDBox pt={6} pb={3}>
-          <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    Loading {TEMPLET_SCREEN_CONFIG[templateType]?.header || "Data"}...
-                  </MDTypography>
-                </MDBox>
-              </Card>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <Footer />
-      </DashboardLayout>
-    );
-  }
 
   if (error) {
     return (
@@ -188,9 +174,9 @@ export function TempletesScreen() {
                 />
               </div>
 
-              <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
+              <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 {/* Filters */}
-                <MDBox sx={{ display: "flex", gap: 3, justifyContent: "space-between" }}>
+               {showFilter && <MDBox sx={{ display: "flex", gap: 3, justifyContent: "space-between" }}>
                   {/* University Filter */}
                   <FormControl sx={{ width: "30%" }}>
                     <InputLabel>University</InputLabel>
@@ -253,7 +239,7 @@ export function TempletesScreen() {
                       ))}
                     </Select>
                   </FormControl>
-                </MDBox>
+                </MDBox>}
 
                 {/* Loading Indicator */}
                 {loading && (
@@ -272,14 +258,26 @@ export function TempletesScreen() {
                       }}
                       isSorted={false}
                       entriesPerPage={false}
-                      showTotalEntries={true}
-                      totalEntries={totalEntries} // Display the total entries count
-                      onPageChange={(newPage) => setPage(newPage)}
-                      onRowsPerPageChange={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
-                      noEndBorder
+                      showTotalEntries={false}
+                      // totalEntries={totalEntries} // Display the total entries count
+                      // onPageChange={(newPage) => setPage(newPage)}
+                      // onRowsPerPageChange={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
+                      // noEndBorder
                     />
                   </MDBox>
                 )}
+
+                <MDBox sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                  <TablePagination
+                    component="div"
+                    count={totalEntries}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    rowsPerPageOptions={recordsPerPageOptions}
+                  />
+                </MDBox>
               </MDBox>
             </Card>
           </Grid>

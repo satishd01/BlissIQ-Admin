@@ -193,6 +193,47 @@ const routes = [
     layout: "/admin",
   },
 
+ {
+    type: "collapse",
+    name: "Sub-admin", // Adding the Sub-admin menu item
+    key: "sub-admin",
+    route: "/sub-admin",
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        admin_panel_settings
+      </i>
+    ), // Updated icon for sub-admin
+    component: <AddSubAdmin />, // The component to render
+    layout: "/admin",
+  },
+
+  {
+    type: "collapse",
+    name: "Create Session", // Change this to reflect the new page's purpose
+    key: "create-session", // Update the key for the new feature
+    route: "/create-session", // Define the new route for creating sessions
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        video_camera_front
+      </i>
+    ),
+    component: <CreateSession />, // Link the component you want to render (e.g., CreateSession component)
+    layout: "/admin", // The layout the component will be part of
+  },
+  {
+    type: "collapse",
+    name: "Get Session", // Change this to reflect the new page's purpose
+    key: "Get-session", // Update the key for the new feature
+    route: "/Get-session", // Define the new route for creating sessions
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        video_camera_front
+      </i>
+    ),
+    component: <GetSessions />, // Link the component you want to render (e.g., CreateSession component)
+    layout: "/admin", // The layout the component will be part of
+  },    
+
 
 
   ...SidebarTempleteRoutes(),

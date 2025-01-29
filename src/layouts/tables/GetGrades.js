@@ -12,6 +12,11 @@ import MDButton from "components/MDButton";
 import MDBadge from "components/MDBadge";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Importing the same design components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -25,6 +30,9 @@ export default function GradeTable() {
   const [searchUniversityId, setSearchUniversityId] = useState(""); // Search by universityId
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentGrade, setCurrentGrade] = useState(null); // Current grade being updated
+  const [universities, setUniversities] = useState([]); // Store universities data
+  const [newGrade, setNewGrade] = useState({ name: "", universityId: "" }); // New grade data
+  const [isFetchingUniversities, setIsFetchingUniversities] = useState(true); // For loading indicator
 
   // Fetch grades based on universityId
   const fetchGrades = async () => {
@@ -38,6 +46,21 @@ export default function GradeTable() {
       console.error("Error fetching grades:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch universities for dropdown
+  const fetchUniversities = async () => {
+    setIsFetchingUniversities(true);
+    try {
+      const response = await axios.get("https://api.blissiq.cloud/admin/university");
+      if (response.data.success) {
+        setUniversities(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching universities:", error);
+    } finally {
+      setIsFetchingUniversities(false);
     }
   };
 
@@ -68,9 +91,10 @@ export default function GradeTable() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setCurrentGrade(null);
+    setNewGrade({ name: "", universityId: "" });
   };
 
-  // Handle input change in modal
+  // Handle input change in modal (for update)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setCurrentGrade({ ...currentGrade, [name]: value });
@@ -103,6 +127,33 @@ export default function GradeTable() {
     }
   };
 
+  // Handle form submission to create grade
+  const handleCreateGradeSubmit = async (event) => {
+    event.preventDefault();
+    if (!newGrade.name || !newGrade.universityId) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("https://api.blissiq.cloud/admin/grade", {
+        name: newGrade.name,
+        universityId: newGrade.universityId,
+      });
+
+      if (response.data.success) {
+        setGrades([...grades, response.data.data]);
+        alert("Grade created successfully!");
+        handleCloseModal();
+      } else {
+        alert("Failed to create grade.");
+      }
+    } catch (error) {
+      console.error("Error creating grade:", error);
+      alert("Failed to create grade.");
+    }
+  };
+
   // Handle search input change
   const handleSearchChange = (event) => {
     setSearchUniversityId(event.target.value);
@@ -110,6 +161,7 @@ export default function GradeTable() {
 
   useEffect(() => {
     fetchGrades();
+    fetchUniversities(); // Fetch universities on page load
   }, [searchUniversityId]); // Fetch grades whenever searchUniversityId changes
 
   if (loading) {
@@ -192,8 +244,15 @@ export default function GradeTable() {
           />
         </MDBox>
 
+        {/* Button to create a new grade (positioned to upper-right corner) */}
+        <MDBox component="div" sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}>
+          <MDButton variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
+            Create Grade
+          </MDButton>
+        </MDBox>
+
         {/* Grades Table */}
-        <MDBox component="div" sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
+        <MDBox component="div" sx={{ display: "flex", flexDirection: "column", height: "auto" }}>
           <MDBox sx={{ flex: 1, overflow: "auto" }}>
             <DataTable
               table={{ columns, rows }}
@@ -206,7 +265,7 @@ export default function GradeTable() {
         </MDBox>
       </MDBox>
 
-      {/* Update Modal */}
+      {/* Create / Update Grade Modal */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <MDBox
           sx={{
@@ -221,29 +280,62 @@ export default function GradeTable() {
             borderRadius: 2,
           }}
         >
-          <form onSubmit={handleFormSubmit}>
+          <form
+            onSubmit={currentGrade ? handleFormSubmit : handleCreateGradeSubmit} // Handle submission
+          >
             <MDTypography variant="h5" gutterBottom>
-              Update Grade
+              {currentGrade ? "Update Grade" : "Create Grade"}
             </MDTypography>
+
             <TextField
               fullWidth
               label="Name"
               name="name"
-              value={currentGrade?.name || ""}
-              onChange={handleInputChange}
+              value={currentGrade?.name || newGrade.name}
+              onChange={(event) => {
+                currentGrade
+                  ? handleInputChange(event)
+                  : setNewGrade({ ...newGrade, name: event.target.value });
+              }}
               margin="normal"
             />
-            <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton
-                variant="outlined"
-                color="secondary"
-                onClick={handleCloseModal}
-                style={{ marginRight: "8px" }}
+
+            <FormControl fullWidth margin="normal" sx={{ padding: '8px' }}>
+              <InputLabel>University</InputLabel>
+              <Select
+                value={currentGrade?.universityId || newGrade.universityId}
+                onChange={(event) => {
+                  currentGrade
+                    ? setCurrentGrade({ ...currentGrade, universityId: event.target.value })
+                    : setNewGrade({ ...newGrade, universityId: event.target.value });
+                }}
+                label="University"
+                sx={{
+                  padding: '12px',  // Added more padding for better styling
+                  borderRadius: '4px',
+                  marginTop: '10px',
+                }}
               >
+                {isFetchingUniversities ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={24} />
+                  </MenuItem>
+                ) : (
+                  universities.map((university) => (
+                    <MenuItem key={university.id} value={university.id}>
+                      {university.name}
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
+            </FormControl>
+
+            <MDBox mt={2} display="flex" justifyContent="flex-end">
+              <MDButton variant="outlined" color="secondary" onClick={handleCloseModal} style={{ marginRight: "8px" }}>
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">
-                Save
+                {currentGrade ? "Save" : "Create"}
               </MDButton>
             </MDBox>
           </form>

@@ -23,8 +23,10 @@ import TextField from "@mui/material/TextField";
 export default function UniversityTable() {
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // State for Create Modal
   const [currentUniversity, setCurrentUniversity] = useState(null); // Current university being updated
+  const [newUniversity, setNewUniversity] = useState({ name: "", address: "" }); // State for new university form
 
   useEffect(() => {
     const fetchUniversities = async () => {
@@ -79,14 +81,9 @@ export default function UniversityTable() {
     const confirmDelete = window.confirm("Are you sure you want to delete this university?");
     if (confirmDelete) {
       try {
-        console.log({ id });
         const response = await axios.delete(`https://api.blissiq.cloud/admin/university/${id}`);
 
-        // Log the response for debugging
-        console.log(response.data);
-
         if (response.data.success) {
-          // Successfully deleted, update state
           setUniversities(universities.filter((university) => university.id !== id));
           alert("University deleted successfully!");
         } else {
@@ -99,26 +96,60 @@ export default function UniversityTable() {
     }
   };
 
-  // Open Modal for editing university
+  // Open Edit Modal for updating university
   const handleUpdate = (university) => {
     setCurrentUniversity(university);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
-  // Close Modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  // Open Create Modal for adding a new university
+  const handleCreate = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  // Close both modals
+  const handleCloseModals = () => {
+    setIsEditModalOpen(false);
+    setIsCreateModalOpen(false);
     setCurrentUniversity(null);
+    setNewUniversity({ name: "", address: "" }); // Clear form fields after closing
   };
 
-  // Handle input change in modal
+  // Handle input change for Edit and Create modals
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setCurrentUniversity({ ...currentUniversity, [name]: value });
+    if (currentUniversity) {
+      setCurrentUniversity({ ...currentUniversity, [name]: value });
+    } else {
+      setNewUniversity({ ...newUniversity, [name]: value });
+    }
   };
 
-  // Handle form submission (update university)
-  const handleFormSubmit = async (event) => {
+  // Handle form submission for creating a new university
+  const handleCreateFormSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post("https://api.blissiq.cloud/admin/university/", {
+        name: newUniversity.name,
+        address: newUniversity.address,
+      });
+
+      if (response.data.success) {
+        setUniversities([...universities, response.data.data]);
+        alert("University added successfully!");
+        handleCloseModals();
+      } else {
+        alert("Failed to add university.");
+      }
+    } catch (error) {
+      console.error("Error adding university:", error);
+      alert("Failed to add university.");
+    }
+  };
+
+  // Handle form submission for updating an existing university
+  const handleUpdateFormSubmit = async (event) => {
     event.preventDefault();
     if (!currentUniversity) return;
 
@@ -136,17 +167,12 @@ export default function UniversityTable() {
         setUniversities(
           universities.map((uni) =>
             uni.id === currentUniversity.id
-              ? {
-                  ...uni,
-                  name: currentUniversity.name,
-                  address: currentUniversity.address,
-                  isActive: currentUniversity.isActive,
-                }
+              ? { ...uni, name: currentUniversity.name, address: currentUniversity.address }
               : uni
           )
         );
         alert("University updated successfully!");
-        handleCloseModal();
+        handleCloseModals();
       } else {
         alert("Failed to update university.");
       }
@@ -183,7 +209,7 @@ export default function UniversityTable() {
             variant="outlined"
             color="error"
             size="small"
-            onClick={() => handleDelete(row.original)} // Delete university by ID
+            onClick={() => handleDelete(row.original.id)} // Delete university by ID
           >
             Delete
           </MDButton>
@@ -208,10 +234,20 @@ export default function UniversityTable() {
                 bgColor="info"
                 borderRadius="lg"
                 coloredShadow="info"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
               >
                 <MDTypography variant="h6" color="white">
                   University Table
                 </MDTypography>
+                <MDButton
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCreate}
+                >
+                  Create University
+                </MDButton>
               </MDBox>
               <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
                 <MDBox sx={{ flex: 1, overflow: "auto" }}>
@@ -229,8 +265,8 @@ export default function UniversityTable() {
         </Grid>
       </MDBox>
 
-      {/* Edit Modal */}
-      <Modal open={isModalOpen} onClose={handleCloseModal}>
+      {/* Create Modal */}
+      <Modal open={isCreateModalOpen} onClose={handleCloseModals}>
         <MDBox
           sx={{
             position: "absolute",
@@ -244,7 +280,59 @@ export default function UniversityTable() {
             borderRadius: 2,
           }}
         >
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleCreateFormSubmit}>
+            <MDTypography variant="h5" gutterBottom>
+              Add New University
+            </MDTypography>
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={newUniversity.name}
+              onChange={handleInputChange}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              value={newUniversity.address}
+              onChange={handleInputChange}
+              margin="normal"
+            />
+            <MDBox mt={2} display="flex" justifyContent="flex-end">
+              <MDButton
+                variant="outlined"
+                color="secondary"
+                onClick={handleCloseModals}
+                style={{ marginRight: "8px" }}
+              >
+                Cancel
+              </MDButton>
+              <MDButton type="submit" variant="contained" color="primary">
+                Save
+              </MDButton>
+            </MDBox>
+          </form>
+        </MDBox>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal open={isEditModalOpen} onClose={handleCloseModals}>
+        <MDBox
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            p: 4,
+            boxShadow: 24,
+            borderRadius: 2,
+          }}
+        >
+          <form onSubmit={handleUpdateFormSubmit}>
             <MDTypography variant="h5" gutterBottom>
               Update University
             </MDTypography>
@@ -268,7 +356,7 @@ export default function UniversityTable() {
               <MDButton
                 variant="outlined"
                 color="secondary"
-                onClick={handleCloseModal}
+                onClick={handleCloseModals}
                 style={{ marginRight: "8px" }}
               >
                 Cancel

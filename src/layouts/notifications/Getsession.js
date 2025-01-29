@@ -26,7 +26,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-function GetSessions() {
+function SessionManagement() {
   const [searchParams, setSearchParams] = useState({
     class: "A1", // default class value
     topic: "",
@@ -37,15 +37,66 @@ function GetSessions() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(""); // State to store message
   const [messageType, setMessageType] = useState(""); // State to store message type (success/error)
-  const [openModal, setOpenModal] = useState(false); // Modal state
+  const [openModal, setOpenModal] = useState(false); // Modal state for update
+  const [openCreateModal, setOpenCreateModal] = useState(false); // Modal state for create
   const [selectedSession, setSelectedSession] = useState(null); // Selected session to update
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false); // Confirm dialog for deletion
   const [deleteSessionId, setDeleteSessionId] = useState(null); // Selected session ID for deletion
+  const [formData, setFormData] = useState({
+    class: "A1", // default class value
+    topic: "",
+    subtopic: "",
+    URL: "",
+    type: "video", // default type
+  });
+  const [file, setFile] = useState(null); // State to store the file for ppt
 
   const navigate = useNavigate(); // Hook to navigate
 
   const handleChange = (e) => {
+    if (e.target.name === "type" && e.target.value === "pptx") {
+      // Reset the file if type changes to pptx
+      setFile(null);
+      setFormData((prevData) => ({ ...prevData, URL: "" }));
+    }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     setSearchParams({ ...searchParams, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]); // Store the selected file
+  };
+
+  const uploadPpt = async () => {
+    if (!file) return; // If no file is selected, return
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("https://api.blissiq.cloud/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        // Set the URL field with the file URL from the upload response
+        setFormData((prevData) => ({
+          ...prevData,
+          URL: `https://api.blissiq.cloud${data.fileUrl}`, // Attach the base URL to the file URL
+        }));
+        setMessageType("success");
+        setMessage("PPT uploaded successfully.");
+      } else {
+        setMessageType("error");
+        setMessage("Failed to upload PPT. Please try again.");
+      }
+    } catch (error) {
+      setMessageType("error");
+      setMessage("An error occurred while uploading the PPT.");
+    }
   };
 
   const fetchSessions = async () => {
@@ -143,6 +194,63 @@ function GetSessions() {
     setDeleteSessionId(null);
   };
 
+  const handleCreateModalOpen = () => {
+    setOpenCreateModal(true);
+  };
+
+  const handleCreateModalClose = () => {
+    setOpenCreateModal(false);
+    setFormData({
+      class: "A1",
+      topic: "",
+      subtopic: "",
+      URL: "",
+      type: "video",
+    });
+    setFile(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(""); // Clear any previous messages
+
+    if (formData.type === "pptx" && !formData.URL) {
+      setMessageType("error");
+      setMessage("Please upload a PPT file first.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api.blissiq.cloud/session/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      // Checking if the response status is "success"
+      if (data.success) {
+        setMessageType("success");
+        setMessage(data.message || "Session created successfully!");
+        setOpenCreateModal(false);
+        fetchSessions();
+      } else {
+        setMessageType("error");
+        setMessage(data.message || "Failed to create session. Please try again.");
+      }
+    } catch (error) {
+      setMessageType("error");
+      setMessage("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSessions();
   }, [searchParams]);
@@ -156,7 +264,7 @@ function GetSessions() {
             <Card>
               <MDBox p={2}>
                 <MDTypography variant="h5" align="center">
-                  Get Sessions
+                  Session Management
                 </MDTypography>
               </MDBox>
               <MDBox pt={2} pb={2} px={2}>
@@ -171,7 +279,7 @@ function GetSessions() {
                     </MDTypography>
                   </MDBox>
                 )}
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form>
                   <Grid container spacing={2} justifyContent="space-between" alignItems="center">
                     <Grid item xs={3}>
                       <TextField
@@ -224,6 +332,17 @@ function GetSessions() {
                     </Grid>
                   </Grid>
                 </form>
+
+                {/* Create Session Button */}
+                <MDButton
+                  variant="gradient"
+                  color="info"
+                  fullWidth
+                  onClick={handleCreateModalOpen}
+                  sx={{ mt: 2 }}
+                >
+                  Create Session
+                </MDButton>
 
                 {/* Sessions Display */}
                 <MDBox mt={3}>
@@ -306,6 +425,109 @@ function GetSessions() {
         </Grid>
       </MDBox>
 
+      {/* Create Session Modal */}
+      <Dialog open={openCreateModal} onClose={handleCreateModalClose}>
+        <DialogTitle>Create Session</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Class"
+                  variant="outlined"
+                  name="class"
+                  value={formData.class}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Topic"
+                  variant="outlined"
+                  name="topic"
+                  value={formData.topic}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Subtopic"
+                  variant="outlined"
+                  name="subtopic"
+                  value={formData.subtopic}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    required
+                    label="Type"
+                    sx={{ padding: "12px 14px" }} // Add padding to make it the same as other fields
+                  >
+                    <MenuItem value="video">Video</MenuItem>
+                    <MenuItem value="pptx">pptx</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {formData.type === "pptx" && (
+                <Grid item xs={12}>
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".pptx"
+                    style={{ width: "100%" }} // Ensure file input spans full width
+                  />
+                  {file && (
+                    <MDButton onClick={uploadPpt} variant="gradient" color="info" fullWidth>
+                      Upload PPT
+                    </MDButton>
+                  )}
+                </Grid>
+              )}
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="URL"
+                  variant="outlined"
+                  name="URL"
+                  value={formData.URL}
+                  onChange={handleChange}
+                  required
+                  disabled={formData.type === "pptx"} // Disable for PPTX type, as URL is filled automatically
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <MDButton
+                  type="submit"
+                  variant="gradient"
+                  color="info"
+                  fullWidth
+                  disabled={loading}
+                >
+                  {loading ? "Creating..." : "Create Session"}
+                </MDButton>
+              </Grid>
+            </Grid>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCreateModalClose} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Update Modal */}
       <Dialog open={openModal} onClose={handleModalClose}>
         <DialogTitle>Update Session</DialogTitle>
@@ -369,4 +591,4 @@ function GetSessions() {
   );
 }
 
-export default GetSessions;
+export default SessionManagement;

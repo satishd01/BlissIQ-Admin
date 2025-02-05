@@ -226,13 +226,13 @@ function GetSubjects() {
             </MDTypography>
             <TextField fullWidth label="Subject Name" name="name" value={formData.name} onChange={handleCreateSubjectChange} margin="normal" required />
             <TextField fullWidth label="Subject Code" name="code" value={formData.code} onChange={handleCreateSubjectChange} margin="normal" required />
-            <TextField fullWidth label="Grade ID" name="gradeId" value={formData.gradeId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
+            {/* <TextField fullWidth label="Grade ID" name="gradeId" value={formData.gradeId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
               {grades.map((grade) => (
                 <option key={grade.id} value={grade.id}>
                   {grade.name}
                 </option>
               ))}
-            </TextField>
+            </TextField> */}
             <TextField fullWidth label="University ID" name="universityId" value={formData.universityId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
               {universities.map((university) => (
                 <option key={university.id} value={university.id}>

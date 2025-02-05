@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-
-// @mui material components
+import {
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import Button from "@mui/material/Button"; // Import MUI Button
-
-// BLISSIQ ADMIN React components
+import Button from "@mui/material/Button";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
-// BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -18,54 +25,142 @@ import DataTable from "examples/Tables/DataTable";
 function Schools() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [newSchool, setNewSchool] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    password: "",
+    address: "",
+    board: "CBSE",
+    staff: 0,
+  });
 
   useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await fetch("https://api.blissiq.cloud/admin.getAll/school");
-        const data = await response.json();
-
-        if (data && data.success) {
-          setSchools(data.data);
-        } else {
-          console.error("No school data found in the response.");
-        }
-      } catch (error) {
-        console.error("Error fetching school data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSchools();
   }, []);
 
-  const toggleActiveState = async (schoolId, currentState) => {
+  const fetchSchools = async () => {
     try {
-      const response = await fetch(
-        `https://api.blissiq.cloud/admin.active-deactive/school/${schoolId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ isActive: !currentState }),
-        }
-      );
-      const result = await response.json();
+      const response = await fetch("https://api.blissiq.cloud/admin.getAll/school");
+      const data = await response.json();
+      if (data?.success) setSchools(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching schools:", error);
+      setLoading(false);
+    }
+  };
 
-      if (result.success) {
-        setSchools((prevSchools) =>
-          prevSchools.map((school) =>
-            school.id === schoolId ? { ...school, isActive: result.data.isActive } : school
-          )
-        );
+  const handleCreateSchool = async () => {
+    try {
+      const response = await fetch("https://api.blissiq.cloud/admin/schools", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSchool),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setSchools([...schools, result.data]);
+        setOpenModal(false);
+        resetForm();
+        alert("School created successfully!");
       } else {
-        console.error("Failed to update school status:", result.message);
+        alert(result.error || "Failed to create school");
       }
     } catch (error) {
-      console.error("Error updating school status:", error);
+      alert("Error creating school");
     }
+  };
+
+  const handleUpdateSchool = async () => {
+    try {
+      const response = await fetch(`https://api.blissiq.cloud/admin/schools/${newSchool.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSchool),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setSchools(schools.map(s => s.id === newSchool.id ? result.data : s));
+        setOpenModal(false);
+        resetForm();
+        alert("School updated successfully!");
+      } else {
+        alert(result.error || "Failed to update school");
+      }
+    } catch (error) {
+      alert("Error updating school");
+    }
+  };
+
+  const handleDeleteSchool = async (id) => {
+    if (window.confirm("Are you sure you want to delete this school?")) {
+      try {
+        const response = await fetch(`https://api.blissiq.cloud/admin/schools/${id}`, {
+          method: "DELETE",
+        });
+        
+        if (response.ok) {
+          setSchools(schools.filter(s => s.id !== id));
+          alert("School deleted successfully!");
+        }
+      } catch (error) {
+        alert("Error deleting school");
+      }
+    }
+  };
+
+  const toggleActiveState = async (id, currentState) => {
+    try {
+      const response = await fetch(`https://api.blissiq.cloud/admin.active-deactive/school/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !currentState }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSchools(schools.map(s => s.id === id ? {...s, isActive: result.data.isActive} : s));
+      }
+    } catch (error) {
+      console.error("Error toggling active state:", error);
+    }
+  };
+
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const newStatus = currentStatus === "approved" ? "pending" : "approved";
+      const response = await fetch(`https://api.blissiq.cloud/admin.approve/school/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSchools(schools.map(s => s.id === id ? {...s, status: result.data.status} : s));
+      }
+    } catch (error) {
+      console.error("Error toggling status:", error);
+    }
+  };
+
+  const resetForm = () => {
+    setNewSchool({
+      id: "",
+      name: "",
+      phone: "",
+      email: "",
+      password: "",
+      address: "",
+      board: "CBSE",
+      staff: 0,
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setNewSchool({...newSchool, [e.target.name]: e.target.value});
   };
 
   if (loading) {
@@ -76,16 +171,7 @@ function Schools() {
           <Grid container spacing={6}>
             <Grid item xs={12}>
               <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
+                <MDBox mx={2} mt={-3} py={3} px={2} variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="info">
                   <MDTypography variant="h6" color="white">
                     Loading Schools Data...
                   </MDTypography>
@@ -105,7 +191,22 @@ function Schools() {
     { Header: "Address", accessor: "address" },
     { Header: "Board", accessor: "board" },
     { Header: "Staff", accessor: "staff" },
-    { Header: "Status", accessor: "status" },
+    {
+      Header: "Status",
+      accessor: "status",
+      Cell: ({ row }) => (
+        <FormControlLabel
+          control={
+            <Switch
+              checked={row.original.status === "approved"}
+              onChange={() => toggleStatus(row.original.id, row.original.status)}
+              color={row.original.status === "approved" ? "success" : "error"}
+            />
+          }
+          label={row.original.status === "approved" ? "Approved" : "Pending"}
+        />
+      ),
+    },
     {
       Header: "Active",
       accessor: "isActive",
@@ -116,13 +217,39 @@ function Schools() {
             backgroundColor: row.original.isActive ? "#4CAF50" : "#F44336",
             color: "white",
             "&:hover": {
-              backgroundColor: row.original.isActive ? "#388E3C" : "#D32F2F", // Slightly darker shades on hover
+              backgroundColor: row.original.isActive ? "#388E3C" : "#D32F2F",
             },
           }}
           onClick={() => toggleActiveState(row.original.id, row.original.isActive)}
         >
           {row.original.isActive ? "Active" : "Inactive"}
         </Button>
+      ),
+    },
+    {
+      Header: "Actions",
+      accessor: "actions",
+      Cell: ({ row }) => (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setNewSchool(row.original);
+              setOpenModal(true);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDeleteSchool(row.original.id)}
+            sx={{ marginLeft: 1 }}
+          >
+            Delete
+          </Button>
+        </>
       ),
     },
   ];
@@ -134,19 +261,25 @@ function Schools() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
+              <MDBox mx={2} mt={-3} py={3} px={2} variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="info">
                 <MDTypography variant="h6" color="white">
                   Schools Table
                 </MDTypography>
+                <Button
+                  variant="contained"
+                  color="white"
+                  sx={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    backgroundColor: "#f44336",
+                    color: "white",
+                    "&:hover": { backgroundColor: "#d32f2f" }
+                  }}
+                  onClick={() => setOpenModal(true)}
+                >
+                  Create School
+                </Button>
               </MDBox>
               <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
                 <MDBox sx={{ flex: 1, overflow: "auto" }}>
@@ -163,6 +296,77 @@ function Schools() {
           </Grid>
         </Grid>
       </MDBox>
+
+      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+        <DialogTitle>{newSchool.id ? "Edit School" : "Create School"}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth margin="normal"
+            label="School Name"
+            name="name"
+            value={newSchool.name}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth margin="normal"
+            label="Phone"
+            name="phone"
+            value={newSchool.phone}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth margin="normal"
+            label="Email"
+            type="email"
+            name="email"
+            value={newSchool.email}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth margin="normal"
+            label="Password"
+            type="password"
+            name="password"
+            value={newSchool.password}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth margin="normal"
+            label="Address"
+            name="address"
+            value={newSchool.address}
+            onChange={handleInputChange}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Board</InputLabel>
+            <Select
+              name="board"
+              value={newSchool.board}
+              label="Board"
+              onChange={handleInputChange}
+            >
+              <MenuItem value="CBSE">CBSE</MenuItem>
+              <MenuItem value="ICSE">ICSE</MenuItem>
+              <MenuItem value="State Board">State Board</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth margin="normal"
+            label="Staff Count"
+            type="number"
+            name="staff"
+            value={newSchool.staff}
+            onChange={handleInputChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+          <Button onClick={newSchool.id ? handleUpdateSchool : handleCreateSchool}>
+            {newSchool.id ? "Update" : "Create"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
       <Footer />
     </DashboardLayout>
   );

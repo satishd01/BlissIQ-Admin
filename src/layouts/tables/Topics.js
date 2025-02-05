@@ -360,7 +360,7 @@ function TopicManagement() {
                 <em>Select University</em>
               </MenuItem>
               {universities.map((university) => (
-                <MenuItem key={university.id} value={university.id}>
+                <MenuItem  sx={inputStyle}  key={university.id} value={university.id}>
                   {university.name}
                 </MenuItem>
               ))}

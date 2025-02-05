@@ -12,6 +12,11 @@ import MDButton from "components/MDButton";
 import MDBadge from "components/MDBadge";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Importing the same design components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -22,9 +27,19 @@ import DataTable from "examples/Tables/DataTable";
 export default function GradeTable() {
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchUniversityId, setSearchUniversityId] = useState(""); // Search by universityId
+  const [searchUniversityId, setSearchUniversityId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentGrade, setCurrentGrade] = useState(null); // Current grade being updated
+  const [currentGrade, setCurrentGrade] = useState(null);
+  const [universities, setUniversities] = useState([]);
+  const [subjects, setSubjects] = useState([]); // Store subjects
+  const [newGrade, setNewGrade] = useState({
+    name: "",
+    universityId: "",
+    subjectId: "", // New field for subject
+    classNo: 1, // New field for class number
+  });
+  const [isFetchingUniversities, setIsFetchingUniversities] = useState(true);
+  const [isFetchingSubjects, setIsFetchingSubjects] = useState(true); // For loading indicator of subjects
 
   // Fetch grades based on universityId
   const fetchGrades = async () => {
@@ -38,6 +53,36 @@ export default function GradeTable() {
       console.error("Error fetching grades:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch universities for dropdown
+  const fetchUniversities = async () => {
+    setIsFetchingUniversities(true);
+    try {
+      const response = await axios.get("https://api.blissiq.cloud/admin/university");
+      if (response.data.success) {
+        setUniversities(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching universities:", error);
+    } finally {
+      setIsFetchingUniversities(false);
+    }
+  };
+
+  // Fetch subjects for dropdown based on universityId
+  const fetchSubjects = async (universityId) => {
+    setIsFetchingSubjects(true);
+    try {
+      const response = await axios.get(`https://api.blissiq.cloud/admin/subject?universityId=${universityId}`);
+      if (response.data.success) {
+        setSubjects(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+    } finally {
+      setIsFetchingSubjects(false);
     }
   };
 
@@ -62,17 +107,23 @@ export default function GradeTable() {
   const handleUpdate = (grade) => {
     setCurrentGrade(grade);
     setIsModalOpen(true);
+    fetchSubjects(grade.universityId); // Fetch subjects for the selected university
   };
 
   // Close modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setCurrentGrade(null);
+    setNewGrade({ name: "", universityId: "", subjectId: "", classNo: 1 });
   };
 
-  // Handle input change in modal
+  // Handle input change in modal (for update)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if (name === "universityId") {
+      // Fetch subjects when university is selected
+      fetchSubjects(value);
+    }
     setCurrentGrade({ ...currentGrade, [name]: value });
   };
 
@@ -84,12 +135,14 @@ export default function GradeTable() {
     try {
       const response = await axios.put(`https://api.blissiq.cloud/admin/grade/${currentGrade.id}`, {
         name: currentGrade.name,
+        subjectId: currentGrade.subjectId,
+        classNo: currentGrade.classNo,
       });
 
       if (response.data.success) {
         setGrades(
           grades.map((grade) =>
-            grade.id === currentGrade.id ? { ...grade, name: currentGrade.name } : grade
+            grade.id === currentGrade.id ? { ...grade, name: currentGrade.name, subjectId: currentGrade.subjectId, classNo: currentGrade.classNo } : grade
           )
         );
         alert("Grade updated successfully!");
@@ -103,6 +156,35 @@ export default function GradeTable() {
     }
   };
 
+  // Handle form submission to create grade
+  const handleCreateGradeSubmit = async (event) => {
+    event.preventDefault();
+    if (!newGrade.name || !newGrade.universityId || !newGrade.subjectId) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("https://api.blissiq.cloud/admin/grade", {
+        name: newGrade.name,
+        universityId: newGrade.universityId,
+        subjectId: newGrade.subjectId,
+        classNo: newGrade.classNo,
+      });
+
+      if (response.data.success) {
+        setGrades([...grades, response.data.data]);
+        alert("Grade created successfully!");
+        handleCloseModal();
+      } else {
+        alert("Failed to create grade.");
+      }
+    } catch (error) {
+      console.error("Error creating grade:", error);
+      alert("Failed to create grade.");
+    }
+  };
+
   // Handle search input change
   const handleSearchChange = (event) => {
     setSearchUniversityId(event.target.value);
@@ -110,7 +192,11 @@ export default function GradeTable() {
 
   useEffect(() => {
     fetchGrades();
-  }, [searchUniversityId]); // Fetch grades whenever searchUniversityId changes
+    fetchUniversities();
+    if (searchUniversityId) {
+      fetchSubjects(searchUniversityId);
+    }
+  }, [searchUniversityId]);
 
   if (loading) {
     return (
@@ -120,10 +206,12 @@ export default function GradeTable() {
     );
   }
 
-  // Columns structure for the grades table (same as University Table)
+  // Columns structure for the grades table
   const columns = [
     { Header: "ID", accessor: "id", align: "left" },
     { Header: "Name", accessor: "name", align: "left" },
+    { Header: "Subject", accessor: "subject", align: "left" },
+    { Header: "Class No", accessor: "classNo", align: "left" },
     { Header: "Status", accessor: "isActive", align: "center" },
     { Header: "Created At", accessor: "createdAt", align: "center" },
     {
@@ -134,7 +222,7 @@ export default function GradeTable() {
             variant="outlined"
             color="info"
             size="small"
-            onClick={() => handleUpdate(row.original)} // Pass the whole row for editing
+            onClick={() => handleUpdate(row.original)}
             style={{ marginRight: "8px" }}
           >
             Edit
@@ -143,7 +231,7 @@ export default function GradeTable() {
             variant="outlined"
             color="error"
             size="small"
-            onClick={() => handleDelete(row.original.id)} // Delete grade by ID
+            onClick={() => handleDelete(row.original.id)}
           >
             Delete
           </MDButton>
@@ -152,17 +240,19 @@ export default function GradeTable() {
     },
   ];
 
-  // Prepare the rows for the table (same as University Table)
+  // Prepare the rows for the table
   const rows = grades.map((grade) => ({
     id: grade.id,
     name: grade.name,
+    subject: grade.subject?.name || "N/A", // Display the subject name
+    classNo: grade.classNo,
     isActive: grade.isActive ? (
       <MDBadge badgeContent="Active" color="success" variant="gradient" size="sm" />
     ) : (
       <MDBadge badgeContent="Inactive" color="error" variant="gradient" size="sm" />
     ),
     createdAt: new Date(grade.createdAt).toLocaleDateString(),
-    actions: "", // Actions are handled by the column above
+    actions: "",
   }));
 
   return (
@@ -192,8 +282,15 @@ export default function GradeTable() {
           />
         </MDBox>
 
+        {/* Button to create a new grade */}
+        <MDBox component="div" sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}>
+          <MDButton variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
+            Create Grade
+          </MDButton>
+        </MDBox>
+
         {/* Grades Table */}
-        <MDBox component="div" sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
+        <MDBox component="div" sx={{ display: "flex", flexDirection: "column", height: "auto" }}>
           <MDBox sx={{ flex: 1, overflow: "auto" }}>
             <DataTable
               table={{ columns, rows }}
@@ -206,7 +303,7 @@ export default function GradeTable() {
         </MDBox>
       </MDBox>
 
-      {/* Update Modal */}
+      {/* Create / Update Grade Modal */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <MDBox
           sx={{
@@ -221,29 +318,98 @@ export default function GradeTable() {
             borderRadius: 2,
           }}
         >
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={currentGrade ? handleFormSubmit : handleCreateGradeSubmit}>
             <MDTypography variant="h5" gutterBottom>
-              Update Grade
+              {currentGrade ? "Update Grade" : "Create Grade"}
             </MDTypography>
+
             <TextField
               fullWidth
               label="Name"
               name="name"
-              value={currentGrade?.name || ""}
-              onChange={handleInputChange}
+              value={currentGrade?.name || newGrade.name}
+              onChange={(event) => {
+                currentGrade
+                  ? handleInputChange(event)
+                  : setNewGrade({ ...newGrade, name: event.target.value });
+              }}
               margin="normal"
             />
-            <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton
-                variant="outlined"
-                color="secondary"
-                onClick={handleCloseModal}
-                style={{ marginRight: "8px" }}
+
+            {/* University Dropdown */}
+            <FormControl fullWidth margin="normal">
+              <InputLabel>University</InputLabel>
+              <Select
+                value={currentGrade?.universityId || newGrade.universityId}
+                onChange={(event) => {
+                  const universityId = event.target.value;
+                  currentGrade
+                    ? setCurrentGrade({ ...currentGrade, universityId })
+                    : setNewGrade({ ...newGrade, universityId });
+                  fetchSubjects(universityId); // Fetch subjects for the selected university
+                }}
+                label="University"
               >
+                {isFetchingUniversities ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={24} />
+                  </MenuItem>
+                ) : (
+                  universities.map((university) => (
+                    <MenuItem key={university.id} value={university.id}>
+                      {university.name}
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
+            </FormControl>
+
+            {/* Subject Dropdown */}
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Subject</InputLabel>
+              <Select
+                value={currentGrade?.subjectId || newGrade.subjectId}
+                onChange={(event) => {
+                  currentGrade
+                    ? setCurrentGrade({ ...currentGrade, subjectId: event.target.value })
+                    : setNewGrade({ ...newGrade, subjectId: event.target.value });
+                }}
+                label="Subject"
+              >
+                {isFetchingSubjects ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={24} />
+                  </MenuItem>
+                ) : (
+                  subjects.map((subject) => (
+                    <MenuItem key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
+            </FormControl>
+
+            {/* Class Number Input */}
+            <TextField
+              fullWidth
+              label="Class Number"
+              type="number"
+              value={currentGrade?.classNo || newGrade.classNo}
+              onChange={(event) => {
+                currentGrade
+                  ? setCurrentGrade({ ...currentGrade, classNo: event.target.value })
+                  : setNewGrade({ ...newGrade, classNo: event.target.value });
+              }}
+              margin="normal"
+            />
+
+            <MDBox mt={2} display="flex" justifyContent="flex-end">
+              <MDButton variant="outlined" color="secondary" onClick={handleCloseModal} style={{ marginRight: "8px" }}>
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">
-                Save
+                {currentGrade ? "Save" : "Create"}
               </MDButton>
             </MDBox>
           </form>

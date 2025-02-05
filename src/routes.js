@@ -59,6 +59,10 @@ import AddSubAdmin from "layouts/notifications/Addsubadmin";
 import CreateSession from "layouts/notifications/CreateSession";
 import GetSessions from "layouts/notifications/Getsession";
 import { SidebarTempleteRoutes } from "templeteRouter";
+import NewTempletesScreen from "layouts/templetes/newTemplate";
+import LearningPathDetail from "layouts/tables/Learningpath";
+import TopicManagement from "layouts/tables/Topics";
+import SubtopicManagement from "layouts/tables/Subtopics";
 
 const routes = [
   {
@@ -71,7 +75,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "All Students", // Adding the Students menu item
+    name: " Students", // Adding the Students menu item
     key: "students",
     route: "/students",
     icon: (
@@ -84,7 +88,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "All Teachers", // Adding the Teachers menu item
+    name: "Teachers", // Adding the Teachers menu item
     key: "teachers",
     route: "/teachers",
     icon: (
@@ -97,7 +101,21 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "All Schools", // Adding the Schools menu item
+    name: "Universities",
+    key: "universities",
+    icon: <Icon fontSize="small">school</Icon>,
+    route: "/universities",
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        school
+      </i>
+    ),
+    component: <GETUniversity />,
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "Schools", // Adding the Schools menu item
     key: "schools",
     route: "/schools",
     icon: (
@@ -110,58 +128,16 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Add University",
-    key: "add-university",
-    icon: <Icon fontSize="small">add_box</Icon>,
-    route: "/university",
+    name: "Subjects",
+    key: "subjects",
+    icon: <Icon fontSize="small">book</Icon>,
+    route: "/subjects",
     icon: (
       <i className="material-icons" style={{ color: "white" }}>
-        group
+        book
       </i>
     ),
-    component: <CreateUniversity />,
-    layout: "/admin",
-  },
-  {
-    type: "collapse",
-    name: "Add Grade",
-    key: "add-grade",
-    icon: <Icon fontSize="small">add_box</Icon>,
-    route: "/grade",
-    icon: (
-      <i className="material-icons" style={{ color: "white" }}>
-        group
-      </i>
-    ),
-    component: <CreateGrade />,
-    layout: "/admin",
-  },
-  {
-    type: "collapse",
-    name: "Add Subject",
-    key: "add-subject",
-    icon: <Icon fontSize="small">add_box</Icon>,
-    route: "/subject",
-    icon: (
-      <i className="material-icons" style={{ color: "white" }}>
-        group
-      </i>
-    ),
-    component: <CreateSubject />,
-    layout: "/admin",
-  },
-  {
-    type: "collapse",
-    name: "Universities",
-    key: "universities",
-    icon: <Icon fontSize="small">school</Icon>,
-    route: "/universities",
-    icon: (
-      <i className="material-icons" style={{ color: "white" }}>
-        group
-      </i>
-    ),
-    component: <GETUniversity />,
+    component: <GetSubjects />,
     layout: "/admin",
   },
   {
@@ -172,7 +148,7 @@ const routes = [
     route: "/grades",
     icon: (
       <i className="material-icons" style={{ color: "white" }}>
-        group
+        list
       </i>
     ),
     component: <GetGrades />,
@@ -180,16 +156,65 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Subjects",
-    key: "subjects",
-    icon: <Icon fontSize="small">book</Icon>,
-    route: "/subjects",
+    name: "topics", // Adding the Sub-admin menu item
+    key: "topics",
+    route: "/topics",
+    icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
+    component: <TopicManagement />, // The component to render
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "Subtopics", // Adding the Sub-admin menu item
+    key: "Subtopics",
+    route: "/subtopics",
+    icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
+    component: <SubtopicManagement />, // The component to render
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "Get Session", // Change this to reflect the new page's purpose
+    key: "Get-session", // Update the key for the new feature
+    route: "/Get-session", // Define the new route for creating sessions
     icon: (
       <i className="material-icons" style={{ color: "white" }}>
-        group
+        video_camera_front
       </i>
     ),
-    component: <GetSubjects />,
+    component: <GetSessions />, // Link the component you want to render (e.g., CreateSession component)
+    layout: "/admin", // The layout the component will be part of
+  },
+
+  {
+    type: "collapse",
+    name: "assesement", // Adding the Sub-admin menu item
+    key: "assesement",
+    route: "/assesement",
+    icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
+    component: <NewTempletesScreen />, // The component to render
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "learningpath", // Adding the Sub-admin menu item
+    key: "learningpath",
+    route: "/learningpath",
+    icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
+    component: <LearningPathDetail />, // The component to render
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "Sub-admin", // Adding the Sub-admin menu item
+    key: "sub-admin",
+    route: "/sub-admin",
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        admin_panel_settings
+      </i>
+    ), // Updated icon for sub-admin
+    component: <AddSubAdmin />, // The component to render
     layout: "/admin",
   },
 

@@ -4,6 +4,8 @@ import axios from "axios";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 
 // BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
@@ -16,16 +18,20 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-
-export default function GetSubjects() {
+function GetSubjects() {
   const [subjects, setSubjects] = useState([]);
+  const [universities, setUniversities] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchUniversityId, setSearchUniversityId] = useState("");
   const [searchGradeId, setSearchGradeId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentSubject, setCurrentSubject] = useState(null); // Current subject being updated
+  const [formData, setFormData] = useState({
+    name: "",
+    code: "",
+    gradeId: "",
+    universityId: "",
+  });
 
   const fetchSubjects = async () => {
     try {
@@ -43,14 +49,93 @@ export default function GetSubjects() {
     }
   };
 
-  // Delete subject
+  const fetchUniversitiesAndGrades = async () => {
+    try {
+      const [universityResponse, gradeResponse] = await Promise.all([
+        axios.get("https://api.blissiq.cloud/admin/university"),
+        axios.get("https://api.blissiq.cloud/admin/grade"),
+      ]);
+      if (universityResponse.data.success && gradeResponse.data.success) {
+        setUniversities(universityResponse.data.data);
+        setGrades(gradeResponse.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching universities or grades:", error);
+    }
+  };
+
+  const handleCreateSubjectChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateSubjectSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Construct the subject data to send in the request body
+      const subjectData = {
+        name: formData.name,
+        code: formData.code,
+        gradeId: formData.gradeId,
+        universityId: formData.universityId,
+      };
+
+      // Send a POST request to create the new subject
+      const response = await axios.post("https://api.blissiq.cloud/admin/subject", subjectData);
+
+      if (response.data.success) {
+        alert("Subject created successfully!");
+        fetchSubjects(); // Fetch updated subjects list after successful creation
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" }); // Reset form fields
+        setIsModalOpen(false); // Close the modal
+      }
+    } catch (error) {
+      console.error("Error creating subject:", error);
+      alert("Failed to create subject.");
+    }
+  };
+
+  const handleUpdateSubjectSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Construct the subject data to send in the request body for update
+      const subjectData = {
+        name: formData.name,
+        code: formData.code,
+        gradeId: formData.gradeId,
+        universityId: formData.universityId,
+      };
+
+      // Send a PUT request to update the subject
+      const response = await axios.put(`https://api.blissiq.cloud/admin/subject/${formData.id}`, subjectData);
+
+      if (response.data.success) {
+        alert("Subject updated successfully!");
+        fetchSubjects(); // Fetch updated subjects list after successful update
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" }); // Reset form fields
+        setIsModalOpen(false); // Close the modal
+      }
+    } catch (error) {
+      console.error("Error updating subject:", error);
+      alert("Failed to update subject.");
+    }
+  };
+
+  const handleUpdate = (subject) => {
+    setFormData({ ...subject }); // Populate the form with the current subject's data
+    setIsModalOpen(true); // Open the modal to edit the subject
+  };
+
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this subject?");
     if (confirmDelete) {
       try {
         const response = await axios.delete(`https://api.blissiq.cloud/admin/subject/${id}`);
         if (response.data.success) {
-          setSubjects(subjects.filter((subject) => subject.id !== id));
+          setSubjects(subjects.filter((subject) => subject.id !== id)); // Remove the deleted subject from the list
           alert("Subject deleted successfully!");
         }
       } catch (error) {
@@ -60,59 +145,9 @@ export default function GetSubjects() {
     }
   };
 
-  // Open modal with subject details
-  const handleUpdate = (subject) => {
-    setCurrentSubject(subject);
-    setIsModalOpen(true);
-  };
-
-  // Close modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setCurrentSubject(null);
-  };
-
-  // Handle form submission
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    if (!currentSubject) return;
-
-    try {
-      const response = await axios.put(
-        `https://api.blissiq.cloud/admin/subject/${currentSubject.id}`,
-        {
-          name: currentSubject.name,
-          code: currentSubject.code,
-        }
-      );
-
-      if (response.data.success) {
-        setSubjects(
-          subjects.map((sub) =>
-            sub.id === currentSubject.id
-              ? { ...sub, name: currentSubject.name, code: currentSubject.code }
-              : sub
-          )
-        );
-        alert("Subject updated successfully!");
-        handleCloseModal();
-      } else {
-        alert("Failed to update subject.");
-      }
-    } catch (error) {
-      console.error("Error updating subject:", error);
-      alert("Failed to update subject.");
-    }
-  };
-
-  // Handle input change in modal
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setCurrentSubject({ ...currentSubject, [name]: value });
-  };
-
   useEffect(() => {
     fetchSubjects(); // Fetch subjects whenever search terms change
+    fetchUniversitiesAndGrades(); // Fetch universities and grades for dropdowns
   }, [searchUniversityId, searchGradeId]);
 
   if (loading) {
@@ -123,7 +158,6 @@ export default function GetSubjects() {
     );
   }
 
-  // Columns structure for the subjects table (same as University Table)
   const columns = [
     { Header: "ID", accessor: "id", align: "left" },
     { Header: "Name", accessor: "name", align: "left" },
@@ -134,21 +168,10 @@ export default function GetSubjects() {
       Header: "Actions",
       Cell: ({ row }) => (
         <MDBox display="flex" justifyContent="center">
-          <MDButton
-            variant="outlined"
-            color="info"
-            size="small"
-            onClick={() => handleUpdate(row.original)} // Pass the whole row for editing
-            style={{ marginRight: "8px" }}
-          >
+          <MDButton variant="outlined" color="info" size="small" onClick={() => handleUpdate(row.original)} style={{ marginRight: "8px" }}>
             Edit
           </MDButton>
-          <MDButton
-            variant="outlined"
-            color="error"
-            size="small"
-            onClick={() => handleDelete(row.original.id)} // Delete subject by ID
-          >
+          <MDButton variant="outlined" color="error" size="small" onClick={() => handleDelete(row.original.id)}>
             Delete
           </MDButton>
         </MDBox>
@@ -156,14 +179,13 @@ export default function GetSubjects() {
     },
   ];
 
-  // Prepare the rows for the table (same as University Table)
   const rows = subjects.map((subject) => ({
     id: subject.id,
     name: subject.name,
     code: subject.code,
     gradeId: subject.gradeId,
     universityId: subject.universityId,
-    actions: "", // Actions are handled by the column above
+    actions: "",
   }));
 
   return (
@@ -173,82 +195,57 @@ export default function GetSubjects() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
+              <MDBox mx={2} mt={-3} py={1} px={2} variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="info">
                 <MDTypography variant="h6" color="white">
                   Subject Table
                 </MDTypography>
+                <MDBox display="flex" justifyContent="flex-end" mt={2}>
+                <MDButton variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
+                  Create Subject
+                </MDButton>
               </MDBox>
+              </MDBox>
+       
               <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
                 <MDBox sx={{ flex: 1, overflow: "auto" }}>
-                  <DataTable
-                    table={{ columns, rows }}
-                    isSorted={false}
-                    entriesPerPage={true}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
+                  <DataTable table={{ columns, rows }} isSorted={false} entriesPerPage={true} showTotalEntries={false} noEndBorder />
                 </MDBox>
               </MDBox>
+  
             </Card>
           </Grid>
         </Grid>
       </MDBox>
 
-      {/* Update Modal */}
-      <Modal open={isModalOpen} onClose={handleCloseModal}>
-        <MDBox
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            p: 4,
-            boxShadow: 24,
-            borderRadius: 2,
-          }}
-        >
-          <form onSubmit={handleFormSubmit}>
+      {/* Create/Edit Subject Modal */}
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <MDBox sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", p: 4, boxShadow: 24, borderRadius: 2 }}>
+          <form onSubmit={formData.id ? handleUpdateSubjectSubmit : handleCreateSubjectSubmit}>
             <MDTypography variant="h5" gutterBottom>
-              Update Subject
+              {formData.id ? "Update Subject" : "Create Subject"}
             </MDTypography>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={currentSubject?.name || ""}
-              onChange={handleInputChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              label="Code"
-              name="code"
-              value={currentSubject?.code || ""}
-              onChange={handleInputChange}
-              margin="normal"
-            />
+            <TextField fullWidth label="Subject Name" name="name" value={formData.name} onChange={handleCreateSubjectChange} margin="normal" required />
+            <TextField fullWidth label="Subject Code" name="code" value={formData.code} onChange={handleCreateSubjectChange} margin="normal" required />
+            {/* <TextField fullWidth label="Grade ID" name="gradeId" value={formData.gradeId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
+              {grades.map((grade) => (
+                <option key={grade.id} value={grade.id}>
+                  {grade.name}
+                </option>
+              ))}
+            </TextField> */}
+            <TextField fullWidth label="University ID" name="universityId" value={formData.universityId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
+              {universities.map((university) => (
+                <option key={university.id} value={university.id}>
+                  {university.name}
+                </option>
+              ))}
+            </TextField>
             <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton
-                variant="outlined"
-                color="secondary"
-                onClick={handleCloseModal}
-                style={{ marginRight: "8px" }}
-              >
+              <MDButton variant="outlined" color="secondary" onClick={() => setIsModalOpen(false)} style={{ marginRight: "8px" }}>
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">
-                Save
+                {formData.id ? "Update" : "Create"}
               </MDButton>
             </MDBox>
           </form>
@@ -259,3 +256,5 @@ export default function GetSubjects() {
     </DashboardLayout>
   );
 }
+
+export default GetSubjects;

@@ -165,7 +165,7 @@ function SessionManagement() {
       } else {
         setSessions([])
         setMessageType("error");
-        setMessage(data.message || "No sessions found or failed to fetch.");
+        setMessage(data.message || "No sessions found ");
       }
     } catch (error) {
       setSessions([])
@@ -310,6 +310,12 @@ function SessionManagement() {
       fetchGrades(searchParams.universityId);
     }
   }, [searchParams.universityId]);
+  useEffect(() => {
+    if (formData.universityId) {
+      fetchSubjects(formData.universityId);
+      fetchGrades(formData.universityId);
+    }
+  }, [formData.universityId]);
 
   useEffect(() => {
     fetchSessions();

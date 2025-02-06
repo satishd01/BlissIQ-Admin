@@ -32,6 +32,7 @@ function SessionManagement() {
     subjectId: "",
     gradeId: "",
     topicId: "",
+    type: "", // Added type for filtering
   });
 
   const [sessions, setSessions] = useState([]);
@@ -153,22 +154,26 @@ function SessionManagement() {
     setLoading(true);
     setMessage(""); // Clear any previous messages
 
-    const { universityId, subjectId, gradeId, topicId } = searchParams;
+    const { universityId, subjectId, gradeId, topicId, type } = searchParams;
     const url = `https://api.blissiq.cloud/session?universityId=${universityId}&subjectId=${subjectId}&gradeId=${gradeId}&topicId=${topicId}`;
 
     try {
       const response = await fetch(url);
       const data = await response.json();
 
-      if (data && Array.isArray(data) && data.length > 0) {
-        setSessions(data); // Store the session data
+      if (data && Array.isArray(data)) {
+        if (type) {
+          setSessions(data.filter(session => session.type === type));
+        } else {
+          setSessions(data);
+        }
       } else {
-        setSessions([])
+        setSessions([]);
         setMessageType("error");
-        setMessage(data.message || "No sessions found ");
+        setMessage(data.message || "No sessions found");
       }
     } catch (error) {
-      setSessions([])
+      setSessions([]);
       setMessageType("error");
       setMessage("An error occurred. Please try again.");
     } finally {
@@ -264,6 +269,15 @@ function SessionManagement() {
 
   const handleModalOpen = (session) => {
     setSelectedSession(session);
+    setFormData({
+      URL: session.URL,
+      type: session.type,
+      universityId: session.universityId,
+      subjectId: session.subjectId,
+      gradeId: session.gradeId,
+      topicId: session.topicId,
+    });
+    setFile(null); // Reset file
     setOpenModal(true);
   };
 
@@ -310,6 +324,7 @@ function SessionManagement() {
       fetchGrades(searchParams.universityId);
     }
   }, [searchParams.universityId]);
+
   useEffect(() => {
     if (formData.universityId) {
       fetchSubjects(formData.universityId);
@@ -431,7 +446,23 @@ function SessionManagement() {
                       </FormControl>
                     </Grid>
                     <Grid item xs={3}>
-                      <MDButton
+                      <FormControl fullWidth variant="outlined">
+                        <InputLabel>Type</InputLabel>
+                        <Select
+                          name="type"
+                          value={searchParams.type}
+                          onChange={(e) => setSearchParams({ ...searchParams, type: e.target.value })}
+                          label="Type"
+                          sx={{ padding: "12px 14px" }}
+                        >
+                          <MenuItem value="">All</MenuItem>
+                          <MenuItem value="video">Video</MenuItem>
+                          <MenuItem value="pptx">pptx</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={3}>
+                      {/* <MDButton
                         variant="gradient"
                         color="info"
                         fullWidth
@@ -439,7 +470,7 @@ function SessionManagement() {
                         onClick={fetchSessions} // Fetch sessions on button click
                       >
                         {loading ? "Loading..." : "Search"}
-                      </MDButton>
+                      </MDButton> */}
                     </Grid>
                   </Grid>
                 </form>
@@ -692,8 +723,8 @@ function SessionManagement() {
                 <InputLabel>University</InputLabel>
                 <Select
                   name="universityId"
-                  value={selectedSession?.universityId || ""}
-                  onChange={(e) => setSelectedSession({ ...selectedSession, universityId: e.target.value })}
+                  value={formData.universityId}
+                  onChange={handleChange}
                   required
                   label="University"
                   sx={{ padding: "12px 14px" }}
@@ -711,8 +742,8 @@ function SessionManagement() {
                 <InputLabel>Subject</InputLabel>
                 <Select
                   name="subjectId"
-                  value={selectedSession?.subjectId || ""}
-                  onChange={(e) => setSelectedSession({ ...selectedSession, subjectId: e.target.value })}
+                  value={formData.subjectId}
+                  onChange={handleChange}
                   required
                   label="Subject"
                   sx={{ padding: "12px 14px" }}
@@ -730,8 +761,8 @@ function SessionManagement() {
                 <InputLabel>Grade</InputLabel>
                 <Select
                   name="gradeId"
-                  value={selectedSession?.gradeId || ""}
-                  onChange={(e) => setSelectedSession({ ...selectedSession, gradeId: e.target.value })}
+                  value={formData.gradeId}
+                  onChange={handleChange}
                   required
                   label="Grade"
                   sx={{ padding: "12px 14px" }}
@@ -749,8 +780,8 @@ function SessionManagement() {
                 <InputLabel>Topic</InputLabel>
                 <Select
                   name="topicId"
-                  value={selectedSession?.topicId || ""}
-                  onChange={(e) => setSelectedSession({ ...selectedSession, topicId: e.target.value })}
+                  value={formData.topicId}
+                  onChange={handleChange}
                   required
                   label="Topic"
                   sx={{ padding: "12px 14px" }}
@@ -768,8 +799,8 @@ function SessionManagement() {
                 <InputLabel>Type</InputLabel>
                 <Select
                   name="type"
-                  value={selectedSession?.type || ""}
-                  onChange={(e) => setSelectedSession({ ...selectedSession, type: e.target.value })}
+                  value={formData.type}
+                  onChange={handleChange}
                   required
                   label="Type"
                   sx={{ padding: "12px 14px" }} // Add padding to make it the same as other fields
@@ -779,15 +810,31 @@ function SessionManagement() {
                 </Select>
               </FormControl>
             </Grid>
+            {formData.type === "pptx" && (
+              <Grid item xs={12}>
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".pptx"
+                  style={{ width: "100%" }} // Ensure file input spans full width
+                />
+                {file && (
+                  <MDButton onClick={uploadPpt} variant="gradient" color="info" fullWidth>
+                    Upload PPT
+                  </MDButton>
+                )}
+              </Grid>
+            )}
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="URL"
                 variant="outlined"
                 name="URL"
-                value={selectedSession?.URL || ""}
-                onChange={(e) => setSelectedSession({ ...selectedSession, URL: e.target.value })}
+                value={formData.URL}
+                onChange={handleChange}
                 required
+                disabled={formData.type === "pptx"} // Disable for PPTX type, as URL is filled automatically
               />
             </Grid>
           </Grid>

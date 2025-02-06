@@ -11,6 +11,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
 
 // BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
@@ -28,7 +31,7 @@ function TopicManagement() {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [universities, setUniversities] = useState([]);
-  const [subjects, setSubjects] = useState([]);  // Subject state updated here
+  const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
   const [searchParams, setSearchParams] = useState({
     universityId: "",
@@ -51,7 +54,7 @@ function TopicManagement() {
   // Define a common style object for input fields
   const inputStyle = {
     width: "100%",
-    mb: 2 ,// Margin bottom for spacing
+    mb: 2, // Margin bottom for spacing
     padding: "14px 14px"
   };
 
@@ -216,64 +219,67 @@ function TopicManagement() {
                 {/* Search Filters */}
                 <Grid container spacing={3} mb={3}>
                   <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="University"
-                      name="universityId"
-                      select
-                      value={searchParams.universityId}
-                      onChange={handleSearchChange}
-                      sx={inputStyle}
-                    >
-                      <MenuItem value="">
-                        <em>Select University</em>
-                      </MenuItem>
-                      {universities.map((university) => (
-                        <MenuItem key={university.id} value={university.id}>
-                          {university.name}
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel>University</InputLabel>
+                      <Select
+                        name="universityId"
+                        value={searchParams.universityId}
+                        onChange={handleSearchChange}
+                        label="University"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select University</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
+                        {universities.map((university) => (
+                          <MenuItem key={university.id} value={university.id}>
+                            {university.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Subject"
-                      name="subjectId"
-                      select
-                      value={searchParams.subjectId}
-                      onChange={handleSearchChange}
-                      sx={inputStyle}
-                    >
-                      <MenuItem value="">
-                        <em>Select Subject</em>
-                      </MenuItem>
-                      {subjects.map((subject) => (
-                        <MenuItem key={subject.id} value={subject.id}>
-                          {subject.name}
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel>Subject</InputLabel>
+                      <Select
+                        name="subjectId"
+                        value={searchParams.subjectId}
+                        onChange={handleSearchChange}
+                        label="Subject"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select Subject</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
+                        {subjects.map((subject) => (
+                          <MenuItem key={subject.id} value={subject.id}>
+                            {subject.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Grade"
-                      name="gradeId"
-                      select
-                      value={searchParams.gradeId}
-                      onChange={handleSearchChange}
-                      sx={inputStyle}
-                    >
-                      <MenuItem value="">
-                        <em>Select Grade</em>
-                      </MenuItem>
-                      {grades.map((grade) => (
-                        <MenuItem key={grade.id} value={grade.id}>
-                          {grade.name}
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel>Grade</InputLabel>
+                      <Select
+                        name="gradeId"
+                        value={searchParams.gradeId}
+                        onChange={handleSearchChange}
+                        label="Grade"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select Grade</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
+                        {grades.map((grade) => (
+                          <MenuItem key={grade.id} value={grade.id}>
+                            {grade.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Grid>
 
@@ -305,6 +311,8 @@ function TopicManagement() {
                                 onClick={() => {
                                   setSelectedTopic(topic);
                                   setEditData(topic);
+                                  fetchSubjects(topic.universityId); // Fetch subjects for the selected university
+                                  fetchGrades(topic.universityId); // Fetch grades for the selected university
                                   setOpenEdit(true);
                                 }}
                               >
@@ -347,62 +355,64 @@ function TopicManagement() {
               value={formData.name}
               onChange={handleFormDataChange}
               sx={inputStyle}
-              
             />
-            <TextField
-              fullWidth
-              label="University"
-              name="universityId"
-              select
-              value={formData.universityId}
-              onChange={handleFormDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select University</em>
-              </MenuItem>
-              {universities.map((university) => (
-                <MenuItem  sx={inputStyle}  key={university.id} value={university.id}>
-                  {university.name}
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>University</InputLabel>
+              <Select
+                name="universityId"
+                value={formData.universityId}
+                onChange={handleFormDataChange}
+                label="University"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select University</em>
                 </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              fullWidth
-              label="Subject"
-              name="subjectId"
-              select
-              value={formData.subjectId}
-              onChange={handleFormDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select Subject</em>
-              </MenuItem>
-              {subjects.map((subject) => (
-                <MenuItem key={subject.id} value={subject.id}>
-                  {subject.name}
+                {universities.map((university) => (
+                  <MenuItem key={university.id} value={university.id}>
+                    {university.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Subject</InputLabel>
+              <Select
+                name="subjectId"
+                value={formData.subjectId}
+                onChange={handleFormDataChange}
+                label="Subject"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Subject</em>
                 </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              fullWidth
-              label="Grade"
-              name="gradeId"
-              select
-              value={formData.gradeId}
-              onChange={handleFormDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select Grade</em>
-              </MenuItem>
-              {grades.map((grade) => (
-                <MenuItem key={grade.id} value={grade.id}>
-                  {grade.name}
+                {subjects.map((subject) => (
+                  <MenuItem key={subject.id} value={subject.id}>
+                    {subject.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Grade</InputLabel>
+              <Select
+                name="gradeId"
+                value={formData.gradeId}
+                onChange={handleFormDataChange}
+                label="Grade"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Grade</em>
                 </MenuItem>
-              ))}
-            </TextField>
+                {grades.map((grade) => (
+                  <MenuItem key={grade.id} value={grade.id}>
+                    {grade.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </MDBox>
         </DialogContent>
         <DialogActions>
@@ -428,60 +438,63 @@ function TopicManagement() {
               onChange={handleEditDataChange}
               sx={inputStyle}
             />
-            <TextField
-              fullWidth
-              label="University"
-              name="universityId"
-              select
-              value={editData?.universityId}
-              onChange={handleEditDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select University</em>
-              </MenuItem>
-              {universities.map((university) => (
-                <MenuItem key={university.id} value={university.id}>
-                  {university.name}
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>University</InputLabel>
+              <Select
+                name="universityId"
+                value={editData?.universityId}
+                onChange={handleEditDataChange}
+                label="University"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select University</em>
                 </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              fullWidth
-              label="Subject"
-              name="subjectId"
-              select
-              value={editData?.subjectId}
-              onChange={handleEditDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select Subject</em>
-              </MenuItem>
-              {subjects.map((subject) => (
-                <MenuItem key={subject.id} value={subject.id}>
-                  {subject.name}
+                {universities.map((university) => (
+                  <MenuItem key={university.id} value={university.id}>
+                    {university.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Subject</InputLabel>
+              <Select
+                name="subjectId"
+                value={editData?.subjectId}
+                onChange={handleEditDataChange}
+                label="Subject"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Subject</em>
                 </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              fullWidth
-              label="Grade"
-              name="gradeId"
-              select
-              value={editData?.gradeId}
-              onChange={handleEditDataChange}
-              sx={inputStyle}
-            >
-              <MenuItem value="">
-                <em>Select Grade</em>
-              </MenuItem>
-              {grades.map((grade) => (
-                <MenuItem key={grade.id} value={grade.id}>
-                  {grade.name}
+                {subjects.map((subject) => (
+                  <MenuItem key={subject.id} value={subject.id}>
+                    {subject.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Grade</InputLabel>
+              <Select
+                name="gradeId"
+                value={editData?.gradeId}
+                onChange={handleEditDataChange}
+                label="Grade"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Grade</em>
                 </MenuItem>
-              ))}
-            </TextField>
+                {grades.map((grade) => (
+                  <MenuItem key={grade.id} value={grade.id}>
+                    {grade.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </MDBox>
         </DialogContent>
         <DialogActions>

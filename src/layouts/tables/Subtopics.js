@@ -11,6 +11,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
 
 // BLISSIQ ADMIN React components
 import MDBox from "components/MDBox";
@@ -187,83 +190,91 @@ function SubtopicManagement() {
               </MDBox>
               <MDBox p={3}>
                 {/* Search Filters */}
+
                 <Grid container spacing={3} mb={3}>
-         
                   {/* <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="University"
-                      name="universityId"
-                      select
-                      value={searchParams.universityId}
-                      onChange={handleSearchChange}
-                    >
-                      <MenuItem value="">
-                        <em>Select University</em>
-                      </MenuItem>
-                      {universities.map((university) => (
-                        <MenuItem key={university.id} value={university.id}>
-                          {university.name}
+                    <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                      <InputLabel>University</InputLabel>
+                      <Select
+                        name="universityId"
+                        value={searchParams.universityId}
+                        onChange={handleSearchChange}
+                        label="University"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select University</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
+                        {universities.map((university) => (
+                          <MenuItem key={university.id} value={university.id}>
+                            {university.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid> */}
+                  {/* <Grid item xs={12} md={4}>
+                    <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                      <InputLabel>Subject</InputLabel>
+                      <Select
+                        name="subjectId"
+                        value={searchParams.subjectId}
+                        onChange={handleSearchChange}
+                        label="Subject"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select Subject</em>
+                        </MenuItem>
+                        {subjects.map((subject) => (
+                          <MenuItem key={subject.id} value={subject.id}>
+                            {subject.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Subject"
-                      name="subjectId"
-                      select
-                      value={searchParams.subjectId}
-                      onChange={handleSearchChange}
-                    >
-                      <MenuItem value="">
-                        <em>Select Subject</em>
-                      </MenuItem>
-                      {subjects.map((subject) => (
-                        <MenuItem key={subject.id} value={subject.id}>
-                          {subject.name}
+                    <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                      <InputLabel>Grade</InputLabel>
+                      <Select
+                        name="gradeId"
+                        value={searchParams.gradeId}
+                        onChange={handleSearchChange}
+                        label="Grade"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select Grade</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Grade"
-                      name="gradeId"
-                      select
-                      value={searchParams.gradeId}
-                      onChange={handleSearchChange}
-                    >
-                      <MenuItem value="">
-                        <em>Select Grade</em>
-                      </MenuItem>
-                      {grades.map((grade) => (
-                        <MenuItem key={grade.id} value={grade.id}>
-                          {grade.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                        {grades.map((grade) => (
+                          <MenuItem key={grade.id} value={grade.id}>
+                            {grade.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid> */}
                   <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Topic"
-                      name="topicId"
-                      select
-                      value={searchParams.topicId}
-                      onChange={handleSearchChange}
-                    >
-                      <MenuItem value="">
-                        <em>Select Topic</em>
-                      </MenuItem>
-                      {topics.map((topic) => (
-                        <MenuItem key={topic.id} value={topic.id}>
-                          {topic.name}
+                    <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                      <InputLabel>Topic</InputLabel>
+                      <Select
+                        name="topicId"
+                        value={searchParams.topicId}
+                        onChange={handleSearchChange}
+                        label="Topic"
+                        sx={{ padding: "12px 14px" }}
+                      >
+                        <MenuItem value="">
+                          <em>Select Topic</em>
                         </MenuItem>
-                      ))}
-                    </TextField>
+                        {topics.map((topic) => (
+                          <MenuItem key={topic.id} value={topic.id}>
+                            {topic.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Grid>
 
@@ -338,23 +349,25 @@ function SubtopicManagement() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <TextField
-              fullWidth
-              label="Topic"
-              name="topicId"
-              select
-              value={formData.topicId}
-              onChange={(e) => setFormData({ ...formData, topicId: e.target.value })}
-            >
-              <MenuItem value="">
-                <em>Select Topic</em>
-              </MenuItem>
-              {topics.map((topic) => (
-                <MenuItem key={topic.id} value={topic.id}>
-                  {topic.name}
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Topic</InputLabel>
+              <Select
+                name="topicId"
+                value={formData.topicId}
+                onChange={(e) => setFormData({ ...formData, topicId: e.target.value })}
+                label="Topic"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Topic</em>
                 </MenuItem>
-              ))}
-            </TextField>
+                {topics.map((topic) => (
+                  <MenuItem key={topic.id} value={topic.id}>
+                    {topic.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </MDBox>
         </DialogContent>
         <DialogActions>
@@ -378,23 +391,25 @@ function SubtopicManagement() {
               onChange={(e) => setEditData({ ...editData, name: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <TextField
-              fullWidth
-              label="Topic"
-              name="topicId"
-              select
-              value={editData?.topicId || ""}
-              onChange={(e) => setEditData({ ...editData, topicId: e.target.value })}
-            >
-              <MenuItem value="">
-                <em>Select Topic</em>
-              </MenuItem>
-              {topics.map((topic) => (
-                <MenuItem key={topic.id} value={topic.id}>
-                  {topic.name}
+            <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel>Topic</InputLabel>
+              <Select
+                name="topicId"
+                value={editData?.topicId || ""}
+                onChange={(e) => setEditData({ ...editData, topicId: e.target.value })}
+                label="Topic"
+                sx={{ padding: "12px 14px" }}
+              >
+                <MenuItem value="">
+                  <em>Select Topic</em>
                 </MenuItem>
-              ))}
-            </TextField>
+                {topics.map((topic) => (
+                  <MenuItem key={topic.id} value={topic.id}>
+                    {topic.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </MDBox>
         </DialogContent>
         <DialogActions>

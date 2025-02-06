@@ -210,7 +210,7 @@ export default function GradeTable() {
   const columns = [
     { Header: "ID", accessor: "id", align: "left" },
     { Header: "Name", accessor: "name", align: "left" },
-    { Header: "Subject", accessor: "subject", align: "left" },
+    { Header: "Subject", accessor: "subjectName", align: "left" }, // Changed to subjectName
     { Header: "Class No", accessor: "classNo", align: "left" },
     { Header: "Status", accessor: "isActive", align: "center" },
     { Header: "Created At", accessor: "createdAt", align: "center" },
@@ -244,7 +244,7 @@ export default function GradeTable() {
   const rows = grades.map((grade) => ({
     id: grade.id,
     name: grade.name,
-    subject: grade.subject?.name || "N/A", // Display the subject name
+    subjectName: grade.subjectId ? subjects.find((subj) => subj.id === grade.subjectId)?.name || "N/A" : "N/A", // Display the subject name
     classNo: grade.classNo,
     isActive: grade.isActive ? (
       <MDBadge badgeContent="Active" color="success" variant="gradient" size="sm" />

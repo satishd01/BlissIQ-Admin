@@ -20,14 +20,11 @@ import FormControl from "@mui/material/FormControl";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-import axios from "axios";
 
 // BLISSIQ ADMIN React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-
-const BASE_URL = "https://api.blissiq.cloud/";
 
 function SessionManagement() {
   const [searchParams, setSearchParams] = useState({
@@ -46,7 +43,6 @@ function SessionManagement() {
   const [selectedSession, setSelectedSession] = useState(null); // Selected session to update
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false); // Confirm dialog for deletion
   const [deleteSessionId, setDeleteSessionId] = useState(null); // Selected session ID for deletion
-  
   const [formData, setFormData] = useState({
     URL: "",
     type: "video", // default type
@@ -79,7 +75,7 @@ function SessionManagement() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${BASE_URL}upload`, {
+      const response = await fetch("https://api.blissiq.cloud/upload", {
         method: "POST",
         body: formData,
       });
@@ -90,7 +86,7 @@ function SessionManagement() {
         // Set the URL field with the file URL from the upload response
         setFormData((prevData) => ({
           ...prevData,
-          URL: `${BASE_URL}${data.fileUrl}`, // Attach the base URL to the file URL
+          URL: `https://api.blissiq.cloud${data.fileUrl}`, // Attach the base URL to the file URL
         }));
         setMessageType("success");
         setMessage("PPT uploaded successfully.");
@@ -106,7 +102,7 @@ function SessionManagement() {
 
   const fetchUniversities = async () => {
     try {
-      const response = await fetch(`${BASE_URL}admin/university`);
+      const response = await fetch("https://api.blissiq.cloud/admin/university");
       const data = await response.json();
       if (data.success) {
         setUniversities(data.data);
@@ -118,18 +114,22 @@ function SessionManagement() {
 
   const fetchSubjects = async (universityId) => {
     try {
-      const subjectRes = await axios.get(`${BASE_URL}admin/subject?universityId=${universityId}`);
-      const subjectData = await subjectRes.json();
-      setSubjects(subjectData.data || []);
+      const response = await fetch(`https://api.blissiq.cloud/admin/subject?universityId=${universityId}`);
+      const data = await response.json();
+
+      if (data.success && Array.isArray(data.data)) {
+        setSubjects(data.data);
+      } else {
+        console.error("No data available or response format error");
+      }
     } catch (error) {
-      console.error(error);
-      setMessage({ type: "error", content: "Failed to fetch subjects" });
+      console.error("Failed to fetch subjects:", error);
     }
   };
 
   const fetchGrades = async (universityId) => {
     try {
-      const response = await fetch(`${BASE_URL}admin/grade?universityId=${universityId}`);
+      const response = await fetch(`https://api.blissiq.cloud/admin/grade?universityId=${universityId}`);
       const data = await response.json();
       if (data.success) {
         setGrades(data.data);
@@ -141,7 +141,7 @@ function SessionManagement() {
 
   const fetchTopics = async () => {
     try {
-      const response = await fetch(`${BASE_URL}topics`);
+      const response = await fetch("https://api.blissiq.cloud/topics");
       const data = await response.json();
       setTopics(data);
     } catch (error) {
@@ -154,7 +154,7 @@ function SessionManagement() {
     setMessage(""); // Clear any previous messages
 
     const { universityId, subjectId, gradeId, topicId } = searchParams;
-    const url = `${BASE_URL}session?universityId=${universityId}&subjectId=${subjectId}&gradeId=${gradeId}&topicId=${topicId}`;
+    const url = `https://api.blissiq.cloud/session?universityId=${universityId}&subjectId=${subjectId}&gradeId=${gradeId}&topicId=${topicId}`;
 
     try {
       const response = await fetch(url);
@@ -163,10 +163,12 @@ function SessionManagement() {
       if (data && Array.isArray(data) && data.length > 0) {
         setSessions(data); // Store the session data
       } else {
+        setSessions([])
         setMessageType("error");
-        setMessage(data.message || "No sessions found or failed to fetch.");
+        setMessage(data.message || "No sessions found ");
       }
     } catch (error) {
+      setSessions([])
       setMessageType("error");
       setMessage("An error occurred. Please try again.");
     } finally {
@@ -180,7 +182,7 @@ function SessionManagement() {
     setMessage(""); // Clear any previous messages
 
     try {
-      const response = await fetch(`${BASE_URL}session/`, {
+      const response = await fetch("https://api.blissiq.cloud/session/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -216,7 +218,7 @@ function SessionManagement() {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}session/${sessionId}`, {
+      const response = await fetch(`https://api.blissiq.cloud/session/${sessionId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +243,7 @@ function SessionManagement() {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`${BASE_URL}session/${deleteSessionId}`, {
+      const response = await fetch(`https://api.blissiq.cloud/session/${deleteSessionId}`, {
         method: "DELETE",
       });
       const data = await response.json();
@@ -262,14 +264,6 @@ function SessionManagement() {
 
   const handleModalOpen = (session) => {
     setSelectedSession(session);
-    setFormData({
-      URL: session.URL,
-      type: session.type,
-      universityId: session.universityId,
-      subjectId: session.subjectId,
-      gradeId: session.gradeId,
-      topicId: session.topicId,
-    });
     setOpenModal(true);
   };
 
@@ -316,10 +310,27 @@ function SessionManagement() {
       fetchGrades(searchParams.universityId);
     }
   }, [searchParams.universityId]);
+  useEffect(() => {
+    if (formData.universityId) {
+      fetchSubjects(formData.universityId);
+      fetchGrades(formData.universityId);
+    }
+  }, [formData.universityId]);
 
   useEffect(() => {
     fetchSessions();
   }, [searchParams]);
+
+  // Utility functions to get names from IDs
+  const getUniversityNameById = (universityId) => {
+    const university = universities.find((uni) => uni.id === universityId);
+    return university ? university.name : "Unknown";
+  };
+
+  const getTopicNameById = (topicId) => {
+    const topic = topics.find((tp) => tp.id === topicId);
+    return topic ? topic.name : "Unknown";
+  };
 
   return (
     <DashboardLayout>
@@ -456,11 +467,11 @@ function SessionManagement() {
                             <Card sx={{ padding: 1, marginBottom: 1 }}>
                               <Grid container spacing={1}>
                                 <Grid item xs={3}>
-                                  <MDTypography variant="h6">{session.universityId}</MDTypography>
+                                  <MDTypography variant="h6">{getUniversityNameById(session.universityId)}</MDTypography>
                                 </Grid>
                                 <Grid item xs={5}>
                                   <MDTypography variant="body1">
-                                    <strong>Topic:</strong> {session.topicId}
+                                    <strong>Topic:</strong> {getTopicNameById(session.topicId)}
                                   </MDTypography>
                                 </Grid>
                                 <Grid item xs={4} align="right">
@@ -667,140 +678,114 @@ function SessionManagement() {
       <Dialog open={openModal} onClose={handleModalClose}>
         <DialogTitle>Update Session</DialogTitle>
         <DialogContent>
-          <form onSubmit={() => handleUpdate(selectedSession.id)}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>University</InputLabel>
-                  <Select
-                    name="universityId"
-                    value={formData.universityId}
-                    onChange={handleChange}
-                    required
-                    label="University"
-                  >
-                    {universities.map((university) => (
-                      <MenuItem key={university.id} value={university.id}>
-                        {university.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>Subject</InputLabel>
-                  <Select
-                    name="subjectId"
-                    value={formData.subjectId}
-                    onChange={handleChange}
-                    required
-                    label="Subject"
-                  >
-                    {subjects.map((subject) => (
-                      <MenuItem key={subject.id} value={subject.id}>
-                        {subject.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>Grade</InputLabel>
-                  <Select
-                    name="gradeId"
-                    value={formData.gradeId}
-                    onChange={handleChange}
-                    required
-                    label="Grade"
-                  >
-                    {grades.map((grade) => (
-                      <MenuItem key={grade.id} value={grade.id}>
-                        {grade.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>Topic</InputLabel>
-                  <Select
-                    name="topicId"
-                    value={formData.topicId}
-                    onChange={handleChange}
-                    required
-                    label="Topic"
-                  >
-                    {topics.map((topic) => (
-                      <MenuItem key={topic.id} value={topic.id}>
-                        {topic.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>Type</InputLabel>
-                  <Select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    required
-                    label="Type"
-                    sx={{ padding: "12px 14px" }} // Add padding to make it the same as other fields
-                  >
-                    <MenuItem value="video">Video</MenuItem>
-                    <MenuItem value="pptx">pptx</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              {formData.type === "pptx" && (
-                <Grid item xs={12}>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    accept=".pptx"
-                    style={{ width: "100%" }} // Ensure file input spans full width
-                  />
-                  {file && (
-                    <MDButton onClick={uploadPpt} variant="gradient" color="info" fullWidth>
-                      Upload PPT
-                    </MDButton>
-                  )}
-                </Grid>
-              )}
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="URL"
-                  variant="outlined"
-                  name="URL"
-                  value={formData.URL}
-                  onChange={handleChange}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>University</InputLabel>
+                <Select
+                  name="universityId"
+                  value={selectedSession?.universityId || ""}
+                  onChange={(e) => setSelectedSession({ ...selectedSession, universityId: e.target.value })}
                   required
-                  disabled={formData.type === "pptx"} // Disable for PPTX type, as URL is filled automatically
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <MDButton
-                  type="submit"
-                  variant="gradient"
-                  color="info"
-                  fullWidth
-                  disabled={loading}
+                  label="University"
                 >
-                  {loading ? "Updating..." : "Update Session"}
-                </MDButton>
-              </Grid>
+                  {universities.map((university) => (
+                    <MenuItem key={university.id} value={university.id}>
+                      {university.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
-          </form>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Subject</InputLabel>
+                <Select
+                  name="subjectId"
+                  value={selectedSession?.subjectId || ""}
+                  onChange={(e) => setSelectedSession({ ...selectedSession, subjectId: e.target.value })}
+                  required
+                  label="Subject"
+                >
+                  {subjects.map((subject) => (
+                    <MenuItem key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Grade</InputLabel>
+                <Select
+                  name="gradeId"
+                  value={selectedSession?.gradeId || ""}
+                  onChange={(e) => setSelectedSession({ ...selectedSession, gradeId: e.target.value })}
+                  required
+                  label="Grade"
+                >
+                  {grades.map((grade) => (
+                    <MenuItem key={grade.id} value={grade.id}>
+                      {grade.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Topic</InputLabel>
+                <Select
+                  name="topicId"
+                  value={selectedSession?.topicId || ""}
+                  onChange={(e) => setSelectedSession({ ...selectedSession, topicId: e.target.value })}
+                  required
+                  label="Topic"
+                >
+                  {topics.map((topic) => (
+                    <MenuItem key={topic.id} value={topic.id}>
+                      {topic.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Type</InputLabel>
+                <Select
+                  name="type"
+                  value={selectedSession?.type || ""}
+                  onChange={(e) => setSelectedSession({ ...selectedSession, type: e.target.value })}
+                  required
+                  label="Type"
+                  sx={{ padding: "12px 14px" }} // Add padding to make it the same as other fields
+                >
+                  <MenuItem value="video">Video</MenuItem>
+                  <MenuItem value="pptx">pptx</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="URL"
+                variant="outlined"
+                name="URL"
+                value={selectedSession?.URL || ""}
+                onChange={(e) => setSelectedSession({ ...selectedSession, URL: e.target.value })}
+                required
+              />
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose} color="secondary">
             Cancel
+          </Button>
+          <Button onClick={() => handleUpdate(selectedSession.id)} color="primary">
+            Update
           </Button>
         </DialogActions>
       </Dialog>

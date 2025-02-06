@@ -75,7 +75,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: " Students", // Adding the Students menu item
+    name: " Student", // Adding the Students menu item
     key: "students",
     route: "/students",
     icon: (
@@ -88,7 +88,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Teachers", // Adding the Teachers menu item
+    name: "Teacher", // Adding the Teachers menu item
     key: "teachers",
     route: "/teachers",
     icon: (
@@ -101,7 +101,20 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Universities",
+    name: "School", // Adding the Schools menu item
+    key: "schools",
+    route: "/schools",
+    icon: (
+      <i className="material-icons" style={{ color: "white" }}>
+        school
+      </i>
+    ), // Icon for schools
+    component: <Schools />, // The component to render
+    layout: "/admin",
+  },
+  {
+    type: "collapse",
+    name: "University",
     key: "universities",
     icon: <Icon fontSize="small">school</Icon>,
     route: "/universities",
@@ -115,20 +128,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Schools", // Adding the Schools menu item
-    key: "schools",
-    route: "/schools",
-    icon: (
-      <i className="material-icons" style={{ color: "white" }}>
-        school
-      </i>
-    ), // Icon for schools
-    component: <Schools />, // The component to render
-    layout: "/admin",
-  },
-  {
-    type: "collapse",
-    name: "Subjects",
+    name: "Subject",
     key: "subjects",
     icon: <Icon fontSize="small">book</Icon>,
     route: "/subjects",
@@ -145,7 +145,7 @@ const routes = [
     name: "Grades",
     key: "grades",
     icon: <Icon fontSize="small">list</Icon>,
-    route: "/grades",
+    route: "/grade",
     icon: (
       <i className="material-icons" style={{ color: "white" }}>
         list
@@ -156,7 +156,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "topics", // Adding the Sub-admin menu item
+    name: "Topic", // Adding the Sub-admin menu item
     key: "topics",
     route: "/topics",
     icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
@@ -165,7 +165,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Subtopics", // Adding the Sub-admin menu item
+    name: "Subtopic", // Adding the Sub-admin menu item
     key: "Subtopics",
     route: "/subtopics",
     icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
@@ -174,7 +174,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Get Session", // Change this to reflect the new page's purpose
+    name: "Session", // Change this to reflect the new page's purpose
     key: "Get-session", // Update the key for the new feature
     route: "/Get-session", // Define the new route for creating sessions
     icon: (
@@ -188,7 +188,7 @@ const routes = [
 
   {
     type: "collapse",
-    name: "assesement", // Adding the Sub-admin menu item
+    name: "Assesement", // Adding the Sub-admin menu item
     key: "assesement",
     route: "/assesement",
     icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin
@@ -197,7 +197,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "learningpath", // Adding the Sub-admin menu item
+    name: "Learningpath", // Adding the Sub-admin menu item
     key: "learningpath",
     route: "/learningpath",
     icon: <Icon fontSize="small">dashboard</Icon>, // Updated icon for sub-admin

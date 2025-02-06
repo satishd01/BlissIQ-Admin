@@ -349,6 +349,7 @@ export default function GradeTable() {
                   fetchSubjects(universityId); // Fetch subjects for the selected university
                 }}
                 label="University"
+                sx={{ padding: "12px 14px" }}
               >
                 {isFetchingUniversities ? (
                   <MenuItem disabled>
@@ -375,6 +376,7 @@ export default function GradeTable() {
                     : setNewGrade({ ...newGrade, subjectId: event.target.value });
                 }}
                 label="Subject"
+                sx={{ padding: "12px 14px" }}
               >
                 {isFetchingSubjects ? (
                   <MenuItem disabled>

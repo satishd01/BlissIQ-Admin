@@ -16,6 +16,8 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  TextField,
+  Box,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -130,114 +132,133 @@ const ImportExportActions = ({
       <Dialog open={openImportModal} onClose={closeModal}>
         <DialogTitle>Import {templateConfig.header}</DialogTitle>
         <DialogContent>
-          <input type="file" accept=".xlsx" onChange={handleFileSelect} />
-          {templateConfig.importSampleFile && (
-            <a
-              style={{
-                textDecoration: "none",
-                color: "#007bff",
-                fontSize: "10px",
-                padding: "2px 6px",
-              }}
-              href={templateConfig.importSampleFile}
-              download
-              target="_blank"
-              rel="noreferrer"
-            >
-              Sample File
-            </a>
-          )}
+          <Box mb={10} p={3}> 
+            <input type="file" accept=".xlsx" onChange={handleFileSelect} style={{ width: "100%" }} />
+            {templateConfig.importSampleFile && (
+              <a
+                style={{
+                  textDecoration: "none",
+                  color: "#007bff",
+                  fontSize: "10px",
+                  padding: "2px 6px",
+                }}
+                href={templateConfig.importSampleFile}
+                download
+                target="_blank"
+                rel="noreferrer"
+              >
+                Sample File
+              </a>
+            )}
+          </Box>
 
           {/* Dropdowns for Filters before Import */}
-          <MDBox display="flex" gap={2} mb={3}>
-            <FormControl fullWidth>
-              <InputLabel>University</InputLabel>
-              <Select
-                name="university"
-                value={filters.university}
-                onChange={(e) => setFilters({ ...filters, university: e.target.value })}
-              >
-                <MenuItem value="">All</MenuItem>
-                {universities.map((university) => (
-                  <MenuItem key={university.id} value={university.id}>
-                    {university.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Subject</InputLabel>
-              <Select
-                name="subject"
-                value={filters.subject}
-                onChange={(e) => setFilters({ ...filters, subject: e.target.value })}
-              >
-                <MenuItem value="">All</MenuItem>
-                {subjects.map((subject) => (
-                  <MenuItem key={subject.id} value={subject.id}>
-                    {subject.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Grade</InputLabel>
-              <Select
-                name="grade"
-                value={filters.grade}
-                onChange={(e) => setFilters({ ...filters, grade: e.target.value })}
-              >
-                <MenuItem value="">All</MenuItem>
-                {grades.map((grade) => (
-                  <MenuItem key={grade.id} value={grade.id}>
-                    {grade.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Topic</InputLabel>
-              <Select
-                name="topic"
-                value={filters.topic}
-                onChange={(e) => setFilters({ ...filters, topic: e.target.value })}
-              >
-                <MenuItem value="">All</MenuItem>
-                {topics.map((topic) => (
-                  <MenuItem key={topic.id} value={topic.id}>
-                    {topic.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Subtopic</InputLabel>
-              <Select
-                name="subtopic"
-                value={filters.subtopic}
-                onChange={(e) => setFilters({ ...filters, subtopic: e.target.value })}
-              >
-                <MenuItem value="">All</MenuItem>
-                {subTopics.map((subTopic) => (
-                  <MenuItem key={subTopic.id} value={subTopic.id}>
-                    {subTopic.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </MDBox>
+          <Box mb={3}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>University</InputLabel>
+                  <Select
+                    name="university"
+                    value={filters.university}
+                    onChange={(e) => setFilters({ ...filters, university: e.target.value })}
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    {universities.map((university) => (
+                      <MenuItem key={university.id} value={university.id}>
+                        {university.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Subject</InputLabel>
+                  <Select
+                    name="subject"
+                    value={filters.subject}
+                    onChange={(e) => setFilters({ ...filters, subject: e.target.value })}
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    {subjects.map((subject) => (
+                      <MenuItem key={subject.id} value={subject.id}>
+                        {subject.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Grade</InputLabel>
+                  <Select
+                    name="grade"
+                    value={filters.grade}
+                    onChange={(e) => setFilters({ ...filters, grade: e.target.value })}
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    {grades.map((grade) => (
+                      <MenuItem key={grade.id} value={grade.id}>
+                        {grade.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Topic</InputLabel>
+                  <Select
+                    name="topic"
+                    value={filters.topic}
+                    onChange={(e) => setFilters({ ...filters, topic: e.target.value })}
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    {topics.map((topic) => (
+                      <MenuItem key={topic.id} value={topic.id}>
+                        {topic.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Subtopic</InputLabel>
+                  <Select
+                    name="subtopic"
+                    value={filters.subtopic}
+                    onChange={(e) => setFilters({ ...filters, subtopic: e.target.value })}
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    {subTopics.map((subTopic) => (
+                      <MenuItem key={subTopic.id} value={subTopic.id}>
+                        {subTopic.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box>
 
-          <div>
+          <Box>
             {warnings.length > 0 && (
-              <div>
+              <Box>
                 {warnings.map((warning, index) => (
                   <p key={index} style={{ color: "red" }}>
                     {warning}
                   </p>
                 ))}
-              </div>
+              </Box>
             )}
-          </div>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeModal}>Cancel</Button>
@@ -255,8 +276,6 @@ const ImportExportActions = ({
     </MDBox>
   );
 };
-
-
 
 const NewTempletesScreen = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(Object.keys(TEMPLET_SCREEN_CONFIG)[0]);
@@ -432,6 +451,7 @@ const NewTempletesScreen = () => {
                         name="university"
                         value={filters.university}
                         onChange={handleUniversityChange}
+                        sx={{ padding: "12px 14px" }}
                       >
                         <MenuItem value="">All</MenuItem>
                         {universities.map((university) => (
@@ -447,6 +467,7 @@ const NewTempletesScreen = () => {
                         name="subject"
                         value={filters.subject}
                         onChange={handleFilterChange}
+                        sx={{ padding: "12px 14px" }}
                       >
                         <MenuItem value="">All</MenuItem>
                         {subjects.map((subject) => (
@@ -462,6 +483,7 @@ const NewTempletesScreen = () => {
                         name="grade"
                         value={filters.grade}
                         onChange={handleFilterChange}
+                        sx={{ padding: "12px 14px" }}
                       >
                         <MenuItem value="">All</MenuItem>
                         {grades.map((grade) => (
@@ -477,6 +499,7 @@ const NewTempletesScreen = () => {
                         name="topic"
                         value={filters.topic}
                         onChange={handleFilterChange}
+                        sx={{ padding: "12px 14px" }}
                       >
                         <MenuItem value="">All</MenuItem>
                         {topics.map((topic) => (
@@ -492,6 +515,7 @@ const NewTempletesScreen = () => {
                         name="subtopic"
                         value={filters.subtopic}
                         onChange={handleFilterChange}
+                        sx={{ padding: "12px 14px" }}
                       >
                         <MenuItem value="">All</MenuItem>
                         {subTopics.map((subTopic) => (

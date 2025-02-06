@@ -180,7 +180,7 @@ function SubtopicManagement() {
                   <MDTypography variant="h6" color="white">
                     Subtopics
                   </MDTypography>
-                  <MDButton variant="gradient" color="dark" onClick={() => setOpenCreate(true)}>
+                  <MDButton variant="gradient" color="error" onClick={() => setOpenCreate(true)}>
                     Create Subtopic
                   </MDButton>
                 </MDBox>
@@ -189,7 +189,7 @@ function SubtopicManagement() {
                 {/* Search Filters */}
                 <Grid container spacing={3} mb={3}>
          
-                  <Grid item xs={12} md={4}>
+                  {/* <Grid item xs={12} md={4}>
                     <TextField
                       fullWidth
                       label="University"
@@ -245,7 +245,7 @@ function SubtopicManagement() {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={4}>
                     <TextField
                       fullWidth

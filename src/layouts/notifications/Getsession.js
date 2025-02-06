@@ -366,6 +366,7 @@ function SessionManagement() {
                           value={searchParams.universityId}
                           onChange={(e) => setSearchParams({ ...searchParams, universityId: e.target.value })}
                           label="University"
+                          sx={{ padding: "12px 14px" }}
                         >
                           {universities.map((university) => (
                             <MenuItem key={university.id} value={university.id}>
@@ -383,6 +384,7 @@ function SessionManagement() {
                           value={searchParams.subjectId}
                           onChange={(e) => setSearchParams({ ...searchParams, subjectId: e.target.value })}
                           label="Subject"
+                          sx={{ padding: "12px 14px" }}
                         >
                           {subjects.map((subject) => (
                             <MenuItem key={subject.id} value={subject.id}>
@@ -400,6 +402,7 @@ function SessionManagement() {
                           value={searchParams.gradeId}
                           onChange={(e) => setSearchParams({ ...searchParams, gradeId: e.target.value })}
                           label="Grade"
+                          sx={{ padding: "12px 14px" }}
                         >
                           {grades.map((grade) => (
                             <MenuItem key={grade.id} value={grade.id}>
@@ -417,6 +420,7 @@ function SessionManagement() {
                           value={searchParams.topicId}
                           onChange={(e) => setSearchParams({ ...searchParams, topicId: e.target.value })}
                           label="Topic"
+                          sx={{ padding: "12px 14px" }}
                         >
                           {topics.map((topic) => (
                             <MenuItem key={topic.id} value={topic.id}>
@@ -547,6 +551,7 @@ function SessionManagement() {
                     onChange={handleChange}
                     required
                     label="University"
+                    sx={{ padding: "12px 14px" }}
                   >
                     {universities.map((university) => (
                       <MenuItem key={university.id} value={university.id}>
@@ -565,6 +570,7 @@ function SessionManagement() {
                     onChange={handleChange}
                     required
                     label="Subject"
+                    sx={{ padding: "12px 14px" }}
                   >
                     {subjects.map((subject) => (
                       <MenuItem key={subject.id} value={subject.id}>
@@ -583,6 +589,7 @@ function SessionManagement() {
                     onChange={handleChange}
                     required
                     label="Grade"
+                    sx={{ padding: "12px 14px" }}
                   >
                     {grades.map((grade) => (
                       <MenuItem key={grade.id} value={grade.id}>
@@ -601,6 +608,7 @@ function SessionManagement() {
                     onChange={handleChange}
                     required
                     label="Topic"
+                    sx={{ padding: "12px 14px" }}
                   >
                     {topics.map((topic) => (
                       <MenuItem key={topic.id} value={topic.id}>
@@ -688,6 +696,7 @@ function SessionManagement() {
                   onChange={(e) => setSelectedSession({ ...selectedSession, universityId: e.target.value })}
                   required
                   label="University"
+                  sx={{ padding: "12px 14px" }}
                 >
                   {universities.map((university) => (
                     <MenuItem key={university.id} value={university.id}>
@@ -706,6 +715,7 @@ function SessionManagement() {
                   onChange={(e) => setSelectedSession({ ...selectedSession, subjectId: e.target.value })}
                   required
                   label="Subject"
+                  sx={{ padding: "12px 14px" }}
                 >
                   {subjects.map((subject) => (
                     <MenuItem key={subject.id} value={subject.id}>
@@ -724,6 +734,7 @@ function SessionManagement() {
                   onChange={(e) => setSelectedSession({ ...selectedSession, gradeId: e.target.value })}
                   required
                   label="Grade"
+                  sx={{ padding: "12px 14px" }}
                 >
                   {grades.map((grade) => (
                     <MenuItem key={grade.id} value={grade.id}>
@@ -742,6 +753,7 @@ function SessionManagement() {
                   onChange={(e) => setSelectedSession({ ...selectedSession, topicId: e.target.value })}
                   required
                   label="Topic"
+                  sx={{ padding: "12px 14px" }}
                 >
                   {topics.map((topic) => (
                     <MenuItem key={topic.id} value={topic.id}>

@@ -51,7 +51,8 @@ function TopicManagement() {
   // Define a common style object for input fields
   const inputStyle = {
     width: "100%",
-    mb: 2 // Margin bottom for spacing
+    mb: 2 ,// Margin bottom for spacing
+    padding: "14px 14px"
   };
 
   // Fetch topics
@@ -206,7 +207,7 @@ function TopicManagement() {
                   <MDTypography variant="h6" color="white">
                     Topic
                   </MDTypography>
-                  <MDButton variant="gradient" color="dark" onClick={() => setOpenCreate(true)}>
+                  <MDButton variant="gradient" color="error" onClick={() => setOpenCreate(true)}>
                     Create Topic
                   </MDButton>
                 </MDBox>
@@ -346,6 +347,7 @@ function TopicManagement() {
               value={formData.name}
               onChange={handleFormDataChange}
               sx={inputStyle}
+              
             />
             <TextField
               fullWidth

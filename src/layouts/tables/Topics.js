@@ -78,7 +78,7 @@ function TopicManagement() {
   const fetchUniversities = async () => {
     try {
       const response = await axios.get(`${BASE_URL}admin/university`);
-      setUniversities(response.data.data || []);
+      setUniversities(response.data.data.reverse() || []);
     } catch (error) {
       console.error(error);
       setMessage({ type: "error", content: "Failed to fetch universities" });
@@ -89,7 +89,7 @@ function TopicManagement() {
   const fetchSubjects = async (universityId) => {
     try {
       const response = await axios.get(`${BASE_URL}admin/subject?universityId=${universityId}`);
-      setSubjects(response.data.data || []);
+      setSubjects(response.data.data.reverse() || []);
     } catch (error) {
       console.error(error);
       setMessage({ type: "error", content: "Failed to fetch subjects" });
@@ -100,7 +100,7 @@ function TopicManagement() {
   const fetchGrades = async (universityId) => {
     try {
       const response = await axios.get(`${BASE_URL}admin/grade?universityId=${universityId}`);
-      setGrades(response.data.data || []);
+      setGrades(response.data.data.reverse() || []);
     } catch (error) {
       console.error(error);
       setMessage({ type: "error", content: "Failed to fetch grades" });

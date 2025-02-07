@@ -106,7 +106,7 @@ function SessionManagement() {
       const response = await fetch("https://api.blissiq.cloud/admin/university");
       const data = await response.json();
       if (data.success) {
-        setUniversities(data.data);
+        setUniversities(data.data.reverse());
       }
     } catch (error) {
       console.error("Failed to fetch universities:", error);
@@ -119,7 +119,7 @@ function SessionManagement() {
       const data = await response.json();
 
       if (data.success && Array.isArray(data.data)) {
-        setSubjects(data.data);
+        setSubjects(data.data.reverse());
       } else {
         console.error("No data available or response format error");
       }
@@ -133,7 +133,7 @@ function SessionManagement() {
       const response = await fetch(`https://api.blissiq.cloud/admin/grade?universityId=${universityId}`);
       const data = await response.json();
       if (data.success) {
-        setGrades(data.data);
+        setGrades(data.data.reverse());
       }
     } catch (error) {
       console.error("Failed to fetch grades:", error);
@@ -200,6 +200,15 @@ function SessionManagement() {
         setMessage("Session created successfully!");
         setOpenCreateModal(false);
         fetchSessions();
+        setFormData({
+          URL: "",
+          type: "video",
+          universityId: "",
+          subjectId: "",
+          gradeId: "",
+          topicId: "",
+        });
+        setFile(null);
       } else {
         setMessageType("error");
         setMessage("Failed to create session. Please try again.");
@@ -236,6 +245,15 @@ function SessionManagement() {
         setMessage("Session updated successfully!");
         setOpenModal(false);
         fetchSessions();
+        setFormData({
+          URL: "",
+          type: "video",
+          universityId: "",
+          subjectId: "",
+          gradeId: "",
+          topicId: "",
+        });
+        setFile(null);
       } else {
         setMessageType("error");
         setMessage("Failed to update session. Please try again.");
@@ -284,6 +302,15 @@ function SessionManagement() {
   const handleModalClose = () => {
     setOpenModal(false);
     setSelectedSession(null);
+    setFormData({
+      URL: "",
+      type: "video",
+      universityId: "",
+      subjectId: "",
+      gradeId: "",
+      topicId: "",
+    });
+    setFile(null);
   };
 
   const handleDeleteConfirmOpen = (sessionId) => {
@@ -298,6 +325,15 @@ function SessionManagement() {
 
   const handleCreateModalOpen = () => {
     setOpenCreateModal(true);
+    setFormData({
+      URL: "",
+      type: "video",
+      universityId: "",
+      subjectId: "",
+      gradeId: "",
+      topicId: "",
+    });
+    setFile(null);
   };
 
   const handleCreateModalClose = () => {

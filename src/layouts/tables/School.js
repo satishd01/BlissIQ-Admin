@@ -32,9 +32,10 @@ function Schools() {
     email: "",
     password: "",
     address: "",
-    board: "CBSE",
+    board: "",
     staff: 0,
   });
+  const [modalKey, setModalKey] = useState(0); // Key to force reset the modal
 
   useEffect(() => {
     fetchSchools();
@@ -43,11 +44,15 @@ function Schools() {
   const fetchSchools = async () => {
     try {
       const response = await fetch("https://api.blissiq.cloud/admin.getAll/school");
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const data = await response.json();
-      if (data?.success) setSchools(data.data);
+      if (data?.success) setSchools(data.data.reverse());
       setLoading(false);
     } catch (error) {
       console.error("Error fetching schools:", error);
+      alert("Failed to fetch schools data. Please check your network connection and try again.");
       setLoading(false);
     }
   };
@@ -59,102 +64,145 @@ function Schools() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSchool),
       });
-
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
       if (response.ok) {
         setSchools([...schools, result.data]);
         setOpenModal(false);
-        resetForm();
+        setNewSchool({
+          name: "",
+          phone: "",
+          email: "",
+          password: "",
+          address: "",
+          board: "",
+          staff: 0,
+        });
+        setModalKey(prevKey => prevKey + 1); // Reset the modal
         alert("School created successfully!");
       } else {
         alert(result.error || "Failed to create school");
       }
     } catch (error) {
-      alert("Error creating school");
+      alert("Error creating school. Please check your network connection and try again.");
     }
   };
 
   const handleUpdateSchool = async () => {
     try {
-      const response = await fetch(`https://api.blissiq.cloud/admin/schools/${newSchool.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newSchool),
-      });
-
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin/schools/${newSchool.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newSchool),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
       if (response.ok) {
         setSchools(schools.map(s => s.id === newSchool.id ? result.data : s));
         setOpenModal(false);
-        resetForm();
+        setNewSchool({
+          name: "",
+          phone: "",
+          email: "",
+          password: "",
+          address: "",
+          board: "",
+          staff: 0,
+        });
+        setModalKey(prevKey => prevKey + 1); // Reset the modal
         alert("School updated successfully!");
       } else {
         alert(result.error || "Failed to update school");
       }
     } catch (error) {
-      alert("Error updating school");
+      alert("Error updating school. Please check your network connection and try again.");
     }
   };
 
   const handleDeleteSchool = async (id) => {
     if (window.confirm("Are you sure you want to delete this school?")) {
       try {
-        const response = await fetch(`https://api.blissiq.cloud/admin/schools/${id}`, {
-          method: "DELETE",
-        });
-        
+        const response = await fetch(
+          `https://api.blissiq.cloud/admin/schools/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         if (response.ok) {
           setSchools(schools.filter(s => s.id !== id));
           alert("School deleted successfully!");
         }
       } catch (error) {
-        alert("Error deleting school");
+        alert("Error deleting school. Please check your network connection and try again.");
       }
     }
   };
 
   const toggleActiveState = async (id, currentState) => {
     try {
-      const response = await fetch(`https://api.blissiq.cloud/admin.active-deactive/school/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: !currentState }),
-      });
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin.active-deactive/school/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isActive: !currentState }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
       if (result.success) {
         setSchools(schools.map(s => s.id === id ? {...s, isActive: result.data.isActive} : s));
       }
     } catch (error) {
       console.error("Error toggling active state:", error);
+      alert("Error toggling active state. Please check your network connection and try again.");
     }
   };
 
   const toggleStatus = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === "approved" ? "pending" : "approved";
-      const response = await fetch(`https://api.blissiq.cloud/admin.approve/school/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin.approve/school/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
       if (result.success) {
         setSchools(schools.map(s => s.id === id ? {...s, status: result.data.status} : s));
       }
     } catch (error) {
       console.error("Error toggling status:", error);
+      alert("Error toggling status. Please check your network connection and try again.");
     }
   };
 
   const resetForm = () => {
     setNewSchool({
-      id: "",
       name: "",
       phone: "",
       email: "",
       password: "",
       address: "",
-      board: "CBSE",
+      board: "",
       staff: 0,
     });
   };
@@ -276,7 +324,11 @@ function Schools() {
                     color: "white",
                     "&:hover": { backgroundColor: "#d32f2f" }
                   }}
-                  onClick={() => setOpenModal(true)}
+                  onClick={() => {
+                    resetForm();
+                    setModalKey(prevKey => prevKey + 1); // Reset the modal
+                    setOpenModal(true);
+                  }}
                 >
                   Create School
                 </Button>
@@ -297,7 +349,7 @@ function Schools() {
         </Grid>
       </MDBox>
 
-      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} key={modalKey}>
         <DialogTitle>{newSchool.id ? "Edit School" : "Create School"}</DialogTitle>
         <DialogContent>
           <TextField

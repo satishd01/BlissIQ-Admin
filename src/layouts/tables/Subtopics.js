@@ -57,7 +57,7 @@ function SubtopicManagement() {
       const response = await axios.get(`${BASE_URL}subtopics`, {
         params: searchParams,
       });
-      setSubtopics(response.data || []);
+      setSubtopics(response.data.reverse() || []);
     } catch (error) {
       const errorMessage = error.response?.data?.error || "Failed to fetch subtopics";
       setMessage({ type: "error", content: errorMessage });

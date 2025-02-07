@@ -47,7 +47,7 @@ export default function GradeTable() {
       const query = searchUniversityId ? `?universityId=${searchUniversityId}` : "";
       const response = await axios.get(`https://api.blissiq.cloud/admin/grade${query}`);
       if (response.data.success) {
-        setGrades(response.data.data);
+        setGrades(response.data.data.reverse());
       }
     } catch (error) {
       console.error("Error fetching grades:", error);
@@ -62,7 +62,7 @@ export default function GradeTable() {
     try {
       const response = await axios.get("https://api.blissiq.cloud/admin/university");
       if (response.data.success) {
-        setUniversities(response.data.data);
+        setUniversities(response.data.data.reverse());  
       }
     } catch (error) {
       console.error("Error fetching universities:", error);
@@ -77,7 +77,7 @@ export default function GradeTable() {
     try {
       const response = await axios.get(`https://api.blissiq.cloud/admin/subject?universityId=${universityId}`);
       if (response.data.success) {
-        setSubjects(response.data.data);
+        setSubjects(response.data.data.reverse());
       }
     } catch (error) {
       console.error("Error fetching subjects:", error);

@@ -32,6 +32,7 @@ function GetSubjects() {
     gradeId: "",
     universityId: "",
   });
+  const [isEditMode, setIsEditMode] = useState(false); // Track if the form is in edit mode
 
   const fetchSubjects = async () => {
     try {
@@ -40,7 +41,7 @@ function GetSubjects() {
       const query = `${universityId}${universityId && gradeId ? "&" : ""}${gradeId}`;
       const response = await axios.get(`https://api.blissiq.cloud/admin/subject?${query}`);
       if (response.data.success) {
-        setSubjects(response.data.data);
+        setSubjects(response.data.data.reverse());
       }
     } catch (error) {
       console.error("Error fetching subjects:", error);
@@ -56,7 +57,7 @@ function GetSubjects() {
         axios.get("https://api.blissiq.cloud/admin/grade"),
       ]);
       if (universityResponse.data.success && gradeResponse.data.success) {
-        setUniversities(universityResponse.data.data);
+        setUniversities(universityResponse.data.data.reverse());
         setGrades(gradeResponse.data.data);
       }
     } catch (error) {
@@ -75,22 +76,18 @@ function GetSubjects() {
   const handleCreateSubjectSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Construct the subject data to send in the request body
       const subjectData = {
         name: formData.name,
         code: formData.code,
         gradeId: formData.gradeId,
         universityId: formData.universityId,
       };
-
-      // Send a POST request to create the new subject
       const response = await axios.post("https://api.blissiq.cloud/admin/subject", subjectData);
-
       if (response.data.success) {
         alert("Subject created successfully!");
-        fetchSubjects(); // Fetch updated subjects list after successful creation
-        setFormData({ name: "", code: "", gradeId: "", universityId: "" }); // Reset form fields
-        setIsModalOpen(false); // Close the modal
+        fetchSubjects();
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" });
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error("Error creating subject:", error);
@@ -101,22 +98,19 @@ function GetSubjects() {
   const handleUpdateSubjectSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Construct the subject data to send in the request body for update
       const subjectData = {
         name: formData.name,
         code: formData.code,
         gradeId: formData.gradeId,
         universityId: formData.universityId,
       };
-
-      // Send a PUT request to update the subject
       const response = await axios.put(`https://api.blissiq.cloud/admin/subject/${formData.id}`, subjectData);
-
       if (response.data.success) {
         alert("Subject updated successfully!");
-        fetchSubjects(); // Fetch updated subjects list after successful update
-        setFormData({ name: "", code: "", gradeId: "", universityId: "" }); // Reset form fields
-        setIsModalOpen(false); // Close the modal
+        fetchSubjects();
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" });
+        setIsModalOpen(false);
+        setIsEditMode(false); // Reset edit mode
       }
     } catch (error) {
       console.error("Error updating subject:", error);
@@ -125,8 +119,9 @@ function GetSubjects() {
   };
 
   const handleUpdate = (subject) => {
-    setFormData({ ...subject }); // Populate the form with the current subject's data
-    setIsModalOpen(true); // Open the modal to edit the subject
+    setFormData({ ...subject });
+    setIsModalOpen(true);
+    setIsEditMode(true); // Set edit mode to true
   };
 
   const handleDelete = async (id) => {
@@ -135,7 +130,7 @@ function GetSubjects() {
       try {
         const response = await axios.delete(`https://api.blissiq.cloud/admin/subject/${id}`);
         if (response.data.success) {
-          setSubjects(subjects.filter((subject) => subject.id !== id)); // Remove the deleted subject from the list
+          setSubjects(subjects.filter((subject) => subject.id !== id));
           alert("Subject deleted successfully!");
         }
       } catch (error) {
@@ -146,8 +141,8 @@ function GetSubjects() {
   };
 
   useEffect(() => {
-    fetchSubjects(); // Fetch subjects whenever search terms change
-    fetchUniversitiesAndGrades(); // Fetch universities and grades for dropdowns
+    fetchSubjects();
+    fetchUniversitiesAndGrades();
   }, [searchUniversityId, searchGradeId]);
 
   if (loading) {
@@ -162,7 +157,7 @@ function GetSubjects() {
     { Header: "ID", accessor: "id", align: "left" },
     { Header: "Name", accessor: "name", align: "left" },
     { Header: "Code", accessor: "code", align: "left" },
-    { Header: "Grade ID", accessor: "gradeId", align: "center" },
+    // { Header: "Grade ID", accessor: "gradeId", align: "center" },
     { Header: "University ID", accessor: "universityId", align: "center" },
     {
       Header: "Actions",
@@ -200,29 +195,34 @@ function GetSubjects() {
                   Subject Table
                 </MDTypography>
                 <MDBox display="flex" justifyContent="flex-end" mt={2}>
-                <MDButton variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
-                  Create Subject
-                </MDButton>
+                  <MDButton variant="contained" color="primary" onClick={() => {
+                    setFormData({ name: "", code: "", gradeId: "", universityId: "" });
+                    setIsModalOpen(true);
+                    setIsEditMode(false); // Reset edit mode
+                  }}>
+                    Create Subject
+                  </MDButton>
+                </MDBox>
               </MDBox>
-              </MDBox>
-       
               <MDBox pt={3} sx={{ display: "flex", flexDirection: "column", height: "400px" }}>
                 <MDBox sx={{ flex: 1, overflow: "auto" }}>
                   <DataTable table={{ columns, rows }} isSorted={false} entriesPerPage={true} showTotalEntries={false} noEndBorder />
                 </MDBox>
               </MDBox>
-  
             </Card>
           </Grid>
         </Grid>
       </MDBox>
 
       {/* Create/Edit Subject Modal */}
-      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal open={isModalOpen} onClose={() => {
+        setIsModalOpen(false);
+        setIsEditMode(false); // Reset edit mode on close
+      }}>
         <MDBox sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", p: 4, boxShadow: 24, borderRadius: 2 }}>
-          <form onSubmit={formData.id ? handleUpdateSubjectSubmit : handleCreateSubjectSubmit}>
+          <form onSubmit={isEditMode ? handleUpdateSubjectSubmit : handleCreateSubjectSubmit}>
             <MDTypography variant="h5" gutterBottom>
-              {formData.id ? "Update Subject" : "Create Subject"}
+              {isEditMode ? "Update Subject" : "Create Subject"}
             </MDTypography>
             <TextField fullWidth label="Subject Name" name="name" value={formData.name} onChange={handleCreateSubjectChange} margin="normal" required />
             <TextField fullWidth label="Subject Code" name="code" value={formData.code} onChange={handleCreateSubjectChange} margin="normal" required />
@@ -241,11 +241,14 @@ function GetSubjects() {
               ))}
             </TextField>
             <MDBox mt={2} display="flex" justifyContent="flex-end">
-              <MDButton variant="outlined" color="secondary" onClick={() => setIsModalOpen(false)} style={{ marginRight: "8px" }}>
+              <MDButton variant="outlined" color="secondary" onClick={() => {
+                setIsModalOpen(false);
+                setIsEditMode(false); // Reset edit mode on cancel
+              }} style={{ marginRight: "8px" }}>
                 Cancel
               </MDButton>
               <MDButton type="submit" variant="contained" color="primary">
-                {formData.id ? "Update" : "Create"}
+                {isEditMode ? "Update" : "Create"}
               </MDButton>
             </MDBox>
           </form>

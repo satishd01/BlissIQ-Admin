@@ -33,7 +33,7 @@ export default function UniversityTable() {
       try {
         const response = await axios.get("https://api.blissiq.cloud/admin/university/");
         if (response.data.success) {
-          setUniversities(response.data.data);
+          setUniversities(response.data.data.reverse());
         }
       } catch (error) {
         console.error("Error fetching universities:", error);

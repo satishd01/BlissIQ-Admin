@@ -142,7 +142,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Grades",
+    name: "Grade",
     key: "grades",
     icon: <Icon fontSize="small">list</Icon>,
     route: "/grade",

@@ -46,12 +46,16 @@ function Teachers() {
     const fetchTeachers = async () => {
       try {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/teacher");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         if (data && data.success) {
-          setTeachers(data.data);
+          setTeachers(data.data.reverse());
         }
       } catch (error) {
         console.error("Error fetching teacher data:", error);
+        alert("Failed to fetch teacher data. Please check your network connection and try again.");
       } finally {
         setLoading(false);
       }
@@ -60,12 +64,16 @@ function Teachers() {
     const fetchSchools = async () => {
       try {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/school");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         if (data && data.success) {
-          setSchools(data.data);
+          setSchools(data.data.reverse());
         }
       } catch (error) {
         console.error("Error fetching schools data:", error);
+        alert("Failed to fetch schools data. Please check your network connection and try again.");
       }
     };
 
@@ -85,6 +93,9 @@ function Teachers() {
           body: JSON.stringify({ isActive: !currentState }),
         }
       );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
 
       if (result.success) {
@@ -96,6 +107,7 @@ function Teachers() {
       }
     } catch (error) {
       console.error("Error updating teacher status:", error);
+      alert("Failed to update teacher status. Please check your network connection and try again.");
     }
   };
 
@@ -112,6 +124,9 @@ function Teachers() {
           body: JSON.stringify({ status: newStatus }),
         }
       );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
 
       if (result.success) {
@@ -123,6 +138,7 @@ function Teachers() {
       }
     } catch (error) {
       console.error("Error updating teacher approval status:", error);
+      alert("Failed to update teacher approval status. Please check your network connection and try again.");
     }
   };
 
@@ -133,7 +149,9 @@ function Teachers() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newTeacher),
       });
-
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
 
       if (response.ok) {
@@ -159,20 +177,26 @@ function Teachers() {
         alert(result.error || "Failed to create teacher");
       }
     } catch (error) {
-      alert("An error occurred while creating the teacher.");
+      console.error("Error creating teacher:", error);
+      alert("Failed to create teacher. Please check your network connection and try again.");
     }
   };
 
   const handleUpdateTeacher = async () => {
     try {
-      const response = await fetch(`https://api.blissiq.cloud/admin/teachers/${newTeacher.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTeacher),
-      });
-
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin/teachers/${newTeacher.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTeacher),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const result = await response.json();
 
       if (response.ok) {
@@ -188,15 +212,16 @@ function Teachers() {
           email: "",
           password: "",
           schoolId: "",
-          class: "10th",
-          board: "CBSE",
+          class: "",
+          board: "",
         });
         alert("Teacher updated successfully!");
       } else {
         alert(result.error || "Failed to update teacher");
       }
     } catch (error) {
-      alert("An error occurred while updating the teacher.");
+      console.error("Error updating teacher:", error);
+      alert("Failed to update teacher. Please check your network connection and try again.");
     }
   };
 
@@ -204,10 +229,15 @@ function Teachers() {
     const confirmDelete = window.confirm("Are you sure you want to delete this teacher?");
     if (confirmDelete) {
       try {
-        const response = await fetch(`https://api.blissiq.cloud/admin/teachers/${teacherId}`, {
-          method: "DELETE",
-        });
-
+        const response = await fetch(
+          `https://api.blissiq.cloud/admin/teachers/${teacherId}`,
+          {
+            method: "DELETE",
+          }
+        );
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const result = await response.json();
 
         if (result.success) {
@@ -219,13 +249,31 @@ function Teachers() {
           alert(result.error || "Failed to delete teacher");
         }
       } catch (error) {
-        alert("An error occurred while deleting the teacher.");
+        console.error("Error deleting teacher:", error);
+        alert("Failed to delete teacher. Please check your network connection and try again.");
       }
     }
   };
 
   const handleInputChange = (e) => {
     setNewTeacher({ ...newTeacher, [e.target.name]: e.target.value });
+  };
+
+  const handleOpenModal = (teacher = null) => {
+    if (teacher) {
+      setNewTeacher(teacher);
+    } else {
+      setNewTeacher({
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        schoolId: "",
+        class: "",
+        board: "",
+      });
+    }
+    setOpenModal(true);
   };
 
   if (loading) {
@@ -349,7 +397,7 @@ function Teachers() {
                       backgroundColor: "#d32f2f",
                     },
                   }}
-                  onClick={() => setOpenModal(true)}
+                  onClick={() => handleOpenModal()}
                 >
                   Create Teacher
                 </Button>

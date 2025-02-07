@@ -46,7 +46,7 @@ function Students() {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/student");
         const data = await response.json();
         if (data && data.success) {
-          setStudents(data.data);
+          setStudents(data.data.reverse());
         }
       } catch (error) {
         console.error("Error fetching student data:", error);
@@ -60,7 +60,7 @@ function Students() {
         const response = await fetch("https://api.blissiq.cloud/admin.getAll/school");
         const data = await response.json();
         if (data && data.success) {
-          setSchools(data.data);
+          setSchools(data.data.reverse());
         }
       } catch (error) {
         console.error("Error fetching schools data:", error);
@@ -134,14 +134,7 @@ function Students() {
 
       const result = await response.json();
 
-      if (response) {
-        // setStudents((prev) => [
-        //   ...prev,
-        //   {
-        //     ...result.data,
-        //     subRows: [],
-        //   },
-        // ]);
+      if (response.ok) {
         setOpenModal(false);
         setNewStudent({
           name: "",
@@ -164,13 +157,16 @@ function Students() {
 
   const handleUpdateStudent = async () => {
     try {
-      const response = await fetch(`https://api.blissiq.cloud/admin/students/${newStudent.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newStudent),
-      });
+      const response = await fetch(
+        `https://api.blissiq.cloud/admin/students/${newStudent.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newStudent),
+        }
+      );
 
       const result = await response.json();
 
@@ -187,8 +183,8 @@ function Students() {
           email: "",
           password: "",
           schoolId: "",
-          board: "CBSE",
-          standard: "10th",
+          board: "",
+          standard: "",
           points: 0,
         });
         alert("Student updated successfully!");
@@ -204,9 +200,12 @@ function Students() {
     const confirmDelete = window.confirm("Are you sure you want to delete this student?");
     if (confirmDelete) {
       try {
-        const response = await fetch(`https://api.blissiq.cloud/admin/students/${studentId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `https://api.blissiq.cloud/admin/students/${studentId}`,
+          {
+            method: "DELETE",
+          }
+        );
 
         const result = await response.json();
 
@@ -226,6 +225,24 @@ function Students() {
 
   const handleInputChange = (e) => {
     setNewStudent({ ...newStudent, [e.target.name]: e.target.value });
+  };
+
+  const handleOpenModal = (student = null) => {
+    if (student) {
+      setNewStudent(student);
+    } else {
+      setNewStudent({
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        schoolId: "",
+        board: "",
+        standard: "",
+        points: 0,
+      });
+    }
+    setOpenModal(true);
   };
 
   if (loading) {
@@ -351,7 +368,7 @@ function Students() {
                       backgroundColor: "#d32f2f",
                     },
                   }}
-                  onClick={() => setOpenModal(true)}
+                  onClick={() => handleOpenModal()}
                 >
                   Create Student
                 </Button>

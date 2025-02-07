@@ -57,7 +57,7 @@ function GetSubjects() {
         axios.get("https://api.blissiq.cloud/admin/grade"),
       ]);
       if (universityResponse.data.success && gradeResponse.data.success) {
-        setUniversities(universityResponse.data.data.reverse());
+        setUniversities(universityResponse.data.data);
         setGrades(gradeResponse.data.data);
       }
     } catch (error) {

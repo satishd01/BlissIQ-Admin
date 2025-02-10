@@ -50,9 +50,13 @@ function GetSubjects() {
 
   const fetchUniversities = async () => {
     try {
-      const universityResponse = await axios.get("https://api.blissiq.cloud/admin/university");
-      if (universityResponse.data.success) {
-        setUniversities(universityResponse.data.data);
+      const [universityResponse, gradeResponse] = await Promise.all([
+        axios.get("https://api.blissiq.cloud/admin/university"),
+        axios.get("https://api.blissiq.cloud/admin/grade"),
+      ]);
+      if (universityResponse.data.success && gradeResponse.data.success) {
+        setUniversities(universityResponse.data.data.reverse());
+        setGrades(gradeResponse.data.data);
       }
     } catch (error) {
       console.error("Error fetching universities:", error);

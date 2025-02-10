@@ -358,6 +358,7 @@ function SessionManagement() {
     if (searchParams.universityId) {
       fetchSubjects(searchParams.universityId);
       fetchGrades(searchParams.universityId);
+      fetchGrades(searchParams.universityId);
     }
   }, [searchParams.universityId]);
 

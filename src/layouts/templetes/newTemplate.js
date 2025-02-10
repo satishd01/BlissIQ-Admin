@@ -323,18 +323,18 @@ const NewTempletesScreen = () => {
       // Fetch Universities
       const universityRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/university`);
       const universityData = await universityRes.json();
-      setUniversities(universityData.data || []);
+      setUniversities(universityData.data.reverse() || []);
 
       if (selectedUniversityId) {
         // Fetch Subjects based on selected university ID
         const subjectRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subject?universityId=${selectedUniversityId}`);
         const subjectData = await subjectRes.json();
-        setSubjects(subjectData.data || []);
+        setSubjects(subjectData.data.reverse() || []);
 
         // Fetch Grades based on selected university ID
         const gradeRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/grade?universityId=${selectedUniversityId}`);
         const gradeData = await gradeRes.json();
-        setGrades(gradeData.data || []);
+        setGrades(gradeData.data.reverse() || []);
       } else {
         setSubjects([]);
         setGrades([]);

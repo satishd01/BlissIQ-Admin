@@ -21,22 +21,24 @@ import DataTable from "examples/Tables/DataTable";
 function GetSubjects() {
   const [subjects, setSubjects] = useState([]);
   const [universities, setUniversities] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchUniversityId, setSearchUniversityId] = useState("");
+  const [searchGradeId, setSearchGradeId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
+    gradeId: "",
     universityId: "",
   });
-
-  console.log("formData", formData);
   const [isEditMode, setIsEditMode] = useState(false); // Track if the form is in edit mode
 
   const fetchSubjects = async () => {
     try {
       const universityId = searchUniversityId ? `universityId=${searchUniversityId}` : "";
-      const query = `${universityId}`;
+      const gradeId = searchGradeId ? `gradeId=${searchGradeId}` : "";
+      const query = `${universityId}${universityId && gradeId ? "&" : ""}${gradeId}`;
       const response = await axios.get(`https://api.blissiq.cloud/admin/subject?${query}`);
       if (response.data.success) {
         setSubjects(response.data.data.reverse());
@@ -48,18 +50,18 @@ function GetSubjects() {
     }
   };
 
-  const fetchUniversities = async () => {
+  const fetchUniversitiesAndGrades = async () => {
     try {
       const [universityResponse, gradeResponse] = await Promise.all([
         axios.get("https://api.blissiq.cloud/admin/university"),
         axios.get("https://api.blissiq.cloud/admin/grade"),
       ]);
       if (universityResponse.data.success && gradeResponse.data.success) {
-        setUniversities(universityResponse.data.data.reverse());
+        setUniversities(universityResponse.data.data);
         setGrades(gradeResponse.data.data);
       }
     } catch (error) {
-      console.error("Error fetching universities:", error);
+      console.error("Error fetching universities or grades:", error);
     }
   };
 
@@ -77,13 +79,14 @@ function GetSubjects() {
       const subjectData = {
         name: formData.name,
         code: formData.code,
+        gradeId: formData.gradeId,
         universityId: formData.universityId,
       };
       const response = await axios.post("https://api.blissiq.cloud/admin/subject", subjectData);
       if (response.data.success) {
         alert("Subject created successfully!");
         fetchSubjects();
-        setFormData({ name: "", code: "", universityId: "" });
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" });
         setIsModalOpen(false);
       }
     } catch (error) {
@@ -98,13 +101,14 @@ function GetSubjects() {
       const subjectData = {
         name: formData.name,
         code: formData.code,
+        gradeId: formData.gradeId,
         universityId: formData.universityId,
       };
       const response = await axios.put(`https://api.blissiq.cloud/admin/subject/${formData.id}`, subjectData);
       if (response.data.success) {
         alert("Subject updated successfully!");
         fetchSubjects();
-        setFormData({ name: "", code: "", universityId: "" });
+        setFormData({ name: "", code: "", gradeId: "", universityId: "" });
         setIsModalOpen(false);
         setIsEditMode(false); // Reset edit mode
       }
@@ -115,12 +119,7 @@ function GetSubjects() {
   };
 
   const handleUpdate = (subject) => {
-    setFormData({
-      id: subject.id,
-      name: subject.name,
-      code: subject.code,
-      universityId: subject.universityId, // Ensure universityId is correctly set
-    });
+    setFormData({ ...subject });
     setIsModalOpen(true);
     setIsEditMode(true); // Set edit mode to true
   };
@@ -143,8 +142,8 @@ function GetSubjects() {
 
   useEffect(() => {
     fetchSubjects();
-    fetchUniversities();
-  }, [searchUniversityId]);
+    fetchUniversitiesAndGrades();
+  }, [searchUniversityId, searchGradeId]);
 
   if (loading) {
     return (
@@ -158,6 +157,7 @@ function GetSubjects() {
     { Header: "ID", accessor: "id", align: "left" },
     { Header: "Name", accessor: "name", align: "left" },
     { Header: "Code", accessor: "code", align: "left" },
+    // { Header: "Grade ID", accessor: "gradeId", align: "center" },
     { Header: "University ID", accessor: "universityId", align: "center" },
     {
       Header: "Actions",
@@ -178,6 +178,7 @@ function GetSubjects() {
     id: subject.id,
     name: subject.name,
     code: subject.code,
+    gradeId: subject.gradeId,
     universityId: subject.universityId,
     actions: "",
   }));
@@ -195,7 +196,7 @@ function GetSubjects() {
                 </MDTypography>
                 <MDBox display="flex" justifyContent="flex-end" mt={2}>
                   <MDButton variant="contained" color="primary" onClick={() => {
-                    setFormData({ name: "", code: "", universityId: "" });
+                    setFormData({ name: "", code: "", gradeId: "", universityId: "" });
                     setIsModalOpen(true);
                     setIsEditMode(false); // Reset edit mode
                   }}>
@@ -225,6 +226,13 @@ function GetSubjects() {
             </MDTypography>
             <TextField fullWidth label="Subject Name" name="name" value={formData.name} onChange={handleCreateSubjectChange} margin="normal" required />
             <TextField fullWidth label="Subject Code" name="code" value={formData.code} onChange={handleCreateSubjectChange} margin="normal" required />
+            {/* <TextField fullWidth label="Grade ID" name="gradeId" value={formData.gradeId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
+              {grades.map((grade) => (
+                <option key={grade.id} value={grade.id}>
+                  {grade.name}
+                </option>
+              ))}
+            </TextField> */}
             <TextField fullWidth label="University ID" name="universityId" value={formData.universityId} onChange={handleCreateSubjectChange} margin="normal" select SelectProps={{ native: true }} required>
               {universities.map((university) => (
                 <option key={university.id} value={university.id}>

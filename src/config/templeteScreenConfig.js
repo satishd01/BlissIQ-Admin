@@ -51,20 +51,38 @@ export const TEMPLET_SCREEN_CONFIG = {
     columns: [
       {
         Header: "Question",
-        accessor: "aa",
+        accessor: "question",
         type: "string",
       },
       {
-        Header: "Options",
-        accessor: "options",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
+        Header: "Options 1",
+        accessor: "option1",
+        type: "string",
+        // Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Options 2",
+        accessor: "option2",
+        type: "string",
+        // Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Options 3",
+        accessor: "option3",
+        type: "string",
+        // Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Options 4",
+        accessor: "option4",
+        type: "string",
+        // Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
         Header: "Answers",
-        accessor: "answers",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
+        accessor: "answer",
+        type: "string",
+        // Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
         Header: "University",
@@ -519,19 +537,50 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Learning Slides",
     columns: [
       {
-        Header: "Slide Title",
-        accessor: "slideTitle",
+        Header: "Key",
+        accessor: "key",
         type: "string",
       },
       {
-        Header: "Slide Content",
-        accessor: "slideContent",
-        type: "string",
+        Header: "Capital Alphabet",
+        accessor: "capitalAlphabet",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
-        Header: "Slide Image",
-        accessor: "slideImage",
-        type: "string",
+        Header: "Small Alphabet",
+        accessor: "smallAlphabet",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Hindi  Alphabet",
+        accessor: "hindiAlphabet",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "English Word",
+        accessor: "englishWord",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Hindi Phonetic-Word",
+        accessor: "hindiPhoneticWord",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Hindi Trasnalation",
+        accessor: "hindiTranslation",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Word Image",
+        accessor: "wordImage",
+        type: "jsonarray",
         Cell: ({ value }) => <img src={value} alt="Slide" style={{ width: 100, height: 100 }} />,
       },
       {
@@ -565,8 +614,34 @@ export const TEMPLET_SCREEN_CONFIG = {
         Cell: ({ value }) => <img src={value} alt="Image" style={{ width: 50, height: 50 }} />,
       },
       {
-        Header: "Letter",
-        accessor: "letter",
+        Header: "key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "English question",
+        accessor: "engQuestion",
+        type: "string",
+      },
+      {
+        Header: "hindi question",
+        accessor: "hinQuestion",
+        type: "string",
+      },
+      {
+        Header: "sound",
+        accessor: "sound",
+        type: "string",
+      },
+      {
+        Header: "Options",
+        accessor: "options",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Correct answer",
+        accessor: "correctAnswer",
         type: "string",
       },
       {
@@ -593,15 +668,43 @@ export const TEMPLET_SCREEN_CONFIG = {
     key: "fillTheVowelTemplates",
     header: "Fill the Vowel",
     columns: [
+ 
       {
-        Header: "Word with missing vowel",
-        accessor: "wordWithVowel",
+        Header: "Points",
+        accessor: "points",
         type: "string",
       },
       {
-        Header: "Correct Vowel",
-        accessor: "correctVowel",
+        Header: "Type",
+        accessor: "type",
         type: "string",
+      },
+      {
+        Header: "Key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "English Title",
+        accessor: "engTitle",
+        type: "string",
+      },
+      {
+        Header: "Hindi Title",
+        accessor: "hinTitle",
+        type: "string",
+      },
+      {
+        Header: "Questions",
+        accessor: "questions",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "Options",
+        accessor: "options",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
         Header: "University",
@@ -623,25 +726,116 @@ export const TEMPLET_SCREEN_CONFIG = {
     icon: "vowel",
   },
 
+  // sayWordTemplates: {
+  //   key: "sayWordTemplates",
+  //   header: "Say Word",
+  //   columns: [
+  //     {
+  //       Header: "Key",
+  //       accessor: "key",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Title",
+  //       accessor: "title",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Highlight Words",
+  //       accessor: "highlightedWords",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Image",
+  //       accessor: "images",
+  //       type: "array",
+  //       Cell: ({ value }) => <img src={value} alt="Word" style={{ width: 50, height: 50 }} />,
+  //     },
+  //     {
+  //       Header: "University",
+  //       accessor: "University.name",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Subject",
+  //       accessor: "Subject.name",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Grade",
+  //       accessor: "Grade.name",
+  //       type: "string",
+  //     },
+  //   ],
+  //   importSampleFile: "https://example.com", 
+  //   icon: "microphone",
+  // },
+
+
   sayWordTemplates: {
     key: "sayWordTemplates",
     header: "Say Word",
     columns: [
       {
-        Header: "Word",
-        accessor: "word",
+        Header: "Key",
+        accessor: "key",
         type: "string",
       },
       {
-        Header: "Pronunciation",
-        accessor: "pronunciation",
+        Header: "Title",
+        accessor: "title",
         type: "string",
       },
       {
-        Header: "Image",
-        accessor: "image",
-        type: "string",
-        Cell: ({ value }) => <img src={value} alt="Word" style={{ width: 50, height: 50 }} />,
+        Header: "Layout",
+        accessor: "layout",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No layout data available</div>;
+          }
+          return (
+            <div>
+              {value.map((scene, index) => (
+                <div key={index}>
+                  <p><strong>Scene {index + 1}:</strong> {scene.text}</p>
+                  {scene.assets && scene.assets.path && (
+                    <img src={scene.assets.path} alt={`Scene ${index + 1}`} style={{ width: 50, height: 50 }} />
+                  )}
+                  <p><strong>Highlighted Words:</strong> {scene.highlightedWords.join(", ")}</p>
+                </div>
+              ))}
+            </div>
+          );
+        },
+      },
+      {
+        Header: "Highlight Words",
+        accessor: "highlightedWords",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No highlighted words available</div>;
+          }
+          return <div>{value.join(", ")}</div>;
+        },
+      },
+      {
+        Header: "Images",
+        accessor: "images",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No images available</div>;
+          }
+          return (
+            <div>
+              {value.map((image, index) => (
+                <img key={index} src={image} alt={`Image ${index + 1}`} style={{ width: 50, height: 50 }} />
+              ))}
+            </div>
+          );
+        },
       },
       {
         Header: "University",
@@ -659,30 +853,36 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://example.com", // Assuming this URL is correct
     icon: "microphone",
   },
+
 
   storyTemplates: {
     key: "storyTemplates",
     header: "Story Templates",
     columns: [
       {
-        Header: "Title",
-        accessor: "title",
+        Header: "Key",
+        accessor: "key",
         type: "string",
       },
       {
-        Header: "Story",
-        accessor: "story",
+        Header: "Question",
+        accessor: "question",
         type: "string",
       },
       {
-        Header: "Image",
-        accessor: "image",
+        Header: "Word",
+        accessor: "word",
         type: "string",
-        Cell: ({ value }) => <img src={value} alt="Story" style={{ width: 100, height: 100 }} />,
       },
+      // {
+      //   Header: "Image",
+      //   accessor: "image",
+      //   type: "string",
+      //   Cell: ({ value }) => <img src={value} alt="Story" style={{ width: 100, height: 100 }} />,
+      // },
       {
         Header: "University",
         accessor: "University.name",
@@ -708,8 +908,18 @@ export const TEMPLET_SCREEN_CONFIG = {
     header: "Image MCQ",
     columns: [
       {
-        Header: "Question",
-        accessor: "question",
+        Header: "Key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "English Title",
+        accessor: "engTitle",
+        type: "string",
+      },
+      {
+        Header: "Hindi Title",
+        accessor: "hinTitle",
         type: "string",
       },
       {
@@ -719,16 +929,20 @@ export const TEMPLET_SCREEN_CONFIG = {
         Cell: ({ value }) => <img src={value} alt="Image" style={{ width: 100, height: 100 }} />,
       },
       {
+        Header: "Sound",
+        accessor: "sound",
+        type: "string",
+      },
+      {
         Header: "Options",
         accessor: "options",
         type: "json",
         Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
-        Header: "Answers",
-        accessor: "answers",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
+        Header: "Corrected Answer",
+        accessor: "correctAnswer",
+        type: "string",
       },
       {
         Header: "University",

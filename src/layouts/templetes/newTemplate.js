@@ -352,9 +352,13 @@ const ImportExportActions = ({
       setModalTopics(topicData || []);
 
       // Fetch subtopics
-      const subTopicRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subtopic`);
+      // const subTopicRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subtopic`);
+      
+      const subTopicRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/subtopics?topicId=${modalFilters.topic}`
+      );
       const subTopicData = await subTopicRes.json();
-      setModalSubTopics(subTopicData.data || []);
+      setModalSubTopics(subTopicData || []);
     } catch (error) {
       console.error("Error fetching modal dropdown data:", error);
     }
@@ -391,7 +395,7 @@ const ImportExportActions = ({
       if (result?.warnings?.length) {
         setWarnings(result.warnings);
       } else {
-        setWarnings([result.message || "Import completed successfully"]);
+        setWarnings([result.message || "error in importing"]);
         onImport(result);
         setTimeout(closeModal, 1000); // Close modal after 2 seconds
       }
@@ -649,9 +653,9 @@ const NewTempletesScreen = () => {
   const [loading, setLoading] = useState(true);
   const [totalEntries, setTotalEntries] = useState(0);
   const [filters, setFilters] = useState({ university: "", subject: "", grade: "", topic: "", subtopic: "" });
+  console.log(filters);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const [universities, setUniversities] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
@@ -682,36 +686,75 @@ const NewTempletesScreen = () => {
     }
   };
 
+  // const fetchDropdownOptions = async () => {
+  //   try {
+  //     const universityRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/university`);
+  //     const universityData = await universityRes.json();
+  //     setUniversities(universityData.data.reverse() || []);
+
+  //     if (selectedUniversityId) {
+  //       const subjectRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subject?universityId=${selectedUniversityId}`);
+  //       const subjectData = await subjectRes.json();
+  //       setSubjects(subjectData.data.reverse() || []);
+
+  //       const gradeRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/grade?universityId=${selectedUniversityId}`);
+  //       const gradeData = await gradeRes.json();
+  //       setGrades(gradeData.data.reverse() || []);
+  //     } else {
+  //       setSubjects([]);
+  //       setGrades([]);
+  //     }
+
+  //     const topicRes = await fetch(`${process.env.REACT_APP_API_URL}/topics?universityId=${selectedUniversityId}&subjectId=${filters.subject}&gradeId=${filters.grade}`);
+  //     const topicData = await topicRes.json();
+  //     setTopics(topicData || []);
+  //     const subTopicRes = await fetch(`${process.env.REACT_APP_API_URL}/subtopics?topicId=${filters.topic}`);
+  //     const subTopicData = await subTopicRes.json();
+  //     setSubTopics(subTopicData || []);
+  //   } catch (error) {
+  //     console.error("Error fetching dropdown data:", error);
+  //   }
+  // };
+
   const fetchDropdownOptions = async () => {
     try {
-      const universityRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/university`);
-      const universityData = await universityRes.json();
-      setUniversities(universityData.data.reverse() || []);
+        // Fetch universities
+        const universityRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/university`);
+        const universityData = await universityRes.json();
+        setUniversities(universityData.data.reverse() || []);
 
-      if (selectedUniversityId) {
-        const subjectRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subject?universityId=${selectedUniversityId}`);
-        const subjectData = await subjectRes.json();
-        setSubjects(subjectData.data.reverse() || []);
+        // Fetch subjects and grades if a university is selected
+        if (selectedUniversityId) {
+            const subjectRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subject?universityId=${selectedUniversityId}`);
+            const subjectData = await subjectRes.json();
+            setSubjects(subjectData.data.reverse() || []);
 
-        const gradeRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/grade?universityId=${selectedUniversityId}`);
-        const gradeData = await gradeRes.json();
-        setGrades(gradeData.data.reverse() || []);
-      } else {
-        setSubjects([]);
-        setGrades([]);
-      }
+            const gradeRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/grade?universityId=${selectedUniversityId}`);
+            const gradeData = await gradeRes.json();
+            setGrades(gradeData.data.reverse() || []);
+        } else {
+            setSubjects([]);
+            setGrades([]);
+        }
 
-      const topicRes = await fetch(`${process.env.REACT_APP_API_URL}/topics?universityId=${selectedUniversityId}&subjectId=${filters.subject}&gradeId=${filters.grade}`);
-      const topicData = await topicRes.json();
-      setTopics(topicData || []);
+        // Fetch topics
+        const topicRes = await fetch(`${process.env.REACT_APP_API_URL}/topics?universityId=${selectedUniversityId}&subjectId=${filters.subject}&gradeId=${filters.grade}`);
+        const topicData = await topicRes.json();
+        setTopics(topicData || []);
 
-      const subTopicRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/subtopic`);
-      const subTopicData = await subTopicRes.json();
-      setSubTopics(subTopicData.data || []);
+        // Ensure topics are fetched before fetching subtopics
+        if (topicData && topicData.length > 0) {
+            const topicId = topicData[0].id; // Assuming you want the first topic's ID
+            const subTopicRes = await fetch(`${process.env.REACT_APP_API_URL}/subtopics?topicId=${topicId}`);
+            const subTopicData = await subTopicRes.json();
+            setSubTopics(subTopicData || []);
+        } else {
+            setSubTopics([]);
+        }
     } catch (error) {
-      console.error("Error fetching dropdown data:", error);
+        console.error("Error fetching dropdown data:", error);
     }
-  };
+};
 
   useEffect(() => {
     fetchData();

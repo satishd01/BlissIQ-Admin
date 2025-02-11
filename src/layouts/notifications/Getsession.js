@@ -51,12 +51,14 @@ function SessionManagement() {
     subjectId: "",
     gradeId: "",
     topicId: "",
+    subTopicId: "", // Added subTopicId
   });
   const [file, setFile] = useState(null); // State to store the file for ppt
   const [universities, setUniversities] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
   const [topics, setTopics] = useState([]);
+  const [subTopics, setSubTopics] = useState([]); // Added subTopics state
 
   const navigate = useNavigate(); // Hook to navigate
 
@@ -150,6 +152,20 @@ function SessionManagement() {
     }
   };
 
+  const fetchSubTopics = async (topicId) => {
+    try {
+      const response = await fetch(`https://api.blissiq.cloud/subtopics?topicId=${topicId}`);
+      const data = await response.json();
+      if (data && Array.isArray(data)) {
+        setSubTopics(data);
+      } else {
+        setSubTopics([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch subtopics:", error);
+    }
+  };
+
   const fetchSessions = async () => {
     setLoading(true);
     setMessage(""); // Clear any previous messages
@@ -192,7 +208,10 @@ function SessionManagement() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          subTopicId: formData.subTopicId || null, // Ensure subTopicId is included
+        }),
       });
 
       if (response.status === 201) {
@@ -207,6 +226,7 @@ function SessionManagement() {
           subjectId: "",
           gradeId: "",
           topicId: "",
+          subTopicId: "", // Reset subTopicId
         });
         setFile(null);
       } else {
@@ -229,6 +249,7 @@ function SessionManagement() {
       gradeId: formData.gradeId,
       subjectId: formData.subjectId,
       topicId: formData.topicId,
+      subTopicId: formData.subTopicId || null, // Ensure subTopicId is included
     };
 
     try {
@@ -252,6 +273,7 @@ function SessionManagement() {
           subjectId: "",
           gradeId: "",
           topicId: "",
+          subTopicId: "", // Reset subTopicId
         });
         setFile(null);
       } else {
@@ -294,6 +316,7 @@ function SessionManagement() {
       subjectId: session.subjectId,
       gradeId: session.gradeId,
       topicId: session.topicId,
+      subTopicId: session.subTopicId || "", // Include subTopicId
     });
     setFile(null); // Reset file
     setOpenModal(true);
@@ -309,6 +332,7 @@ function SessionManagement() {
       subjectId: "",
       gradeId: "",
       topicId: "",
+      subTopicId: "", // Reset subTopicId
     });
     setFile(null);
   };
@@ -332,6 +356,7 @@ function SessionManagement() {
       subjectId: "",
       gradeId: "",
       topicId: "",
+      subTopicId: "", // Reset subTopicId
     });
     setFile(null);
   };
@@ -345,6 +370,7 @@ function SessionManagement() {
       subjectId: "",
       gradeId: "",
       topicId: "",
+      subTopicId: "", // Reset subTopicId
     });
     setFile(null);
   };
@@ -357,7 +383,6 @@ function SessionManagement() {
   useEffect(() => {
     if (searchParams.universityId) {
       fetchSubjects(searchParams.universityId);
-      fetchGrades(searchParams.universityId);
       fetchGrades(searchParams.universityId);
     }
   }, [searchParams.universityId]);
@@ -373,6 +398,12 @@ function SessionManagement() {
     fetchSessions();
   }, [searchParams]);
 
+  useEffect(() => {
+    if (formData.topicId) {
+      fetchSubTopics(formData.topicId);
+    }
+  }, [formData.topicId]);
+
   // Utility functions to get names from IDs
   const getUniversityNameById = (universityId) => {
     const university = universities.find((uni) => uni.id === universityId);
@@ -382,6 +413,11 @@ function SessionManagement() {
   const getTopicNameById = (topicId) => {
     const topic = topics.find((tp) => tp.id === topicId);
     return topic ? topic.name : "Unknown";
+  };
+
+  const getSubTopicNameById = (subTopicId) => {
+    const subTopic = subTopics.find((subTp) => subTp.id === subTopicId);
+    return subTopic ? subTopic.name : "Unknown";
   };
 
   return (
@@ -545,6 +581,9 @@ function SessionManagement() {
                                   <MDTypography variant="body1">
                                     <strong>Topic:</strong> {getTopicNameById(session.topicId)}
                                   </MDTypography>
+                                  <MDTypography variant="body1">
+                                    <strong>Subtopic:</strong> {getSubTopicNameById(session.subTopicId)}
+                                  </MDTypography>
                                 </Grid>
                                 <Grid item xs={4} align="right">
                                   <Grid container spacing={1}>
@@ -681,6 +720,24 @@ function SessionManagement() {
                     {topics.map((topic) => (
                       <MenuItem key={topic.id} value={topic.id}>
                         {topic.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Subtopic</InputLabel>
+                  <Select
+                    name="subTopicId"
+                    value={formData.subTopicId}
+                    onChange={handleChange}
+                    label="Subtopic"
+                    sx={{ padding: "12px 14px" }}
+                  >
+                    {subTopics.map((subTopic) => (
+                      <MenuItem key={subTopic.id} value={subTopic.id}>
+                        {subTopic.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -826,6 +883,24 @@ function SessionManagement() {
                   {topics.map((topic) => (
                     <MenuItem key={topic.id} value={topic.id}>
                       {topic.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Subtopic</InputLabel>
+                <Select
+                  name="subTopicId"
+                  value={formData.subTopicId}
+                  onChange={handleChange}
+                  label="Subtopic"
+                  sx={{ padding: "12px 14px" }}
+                >
+                  {subTopics.map((subTopic) => (
+                    <MenuItem key={subTopic.id} value={subTopic.id}>
+                      {subTopic.name}
                     </MenuItem>
                   ))}
                 </Select>

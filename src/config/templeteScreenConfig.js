@@ -528,7 +528,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1eIt6l3kYvGZdLhTfjxVjSXN6098MWJgWTA7cijVNVeA/edit?gid=0#gid=0", 
     icon: "volume-up",
   },
 
@@ -599,7 +599,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1Vkii3SCwgU_E9xfm2FXrgiziq8e7ihzIvqdeba_83Mw/edit?gid=0#gid=0", 
     icon: "slide",
   },
 
@@ -660,7 +660,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://https://docs.google.com/spreadsheets/d/18HBeZ9xLeQBgI6v_OELkeyP-qQdthqLsSJeYm5XVz-k/edit?gid=0#gid=0.com", 
     icon: "image",
   },
 
@@ -722,7 +722,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1eJldr5TVAGjKFXImorJMC-stf1pNwD1TONzVHN-EoCs/edit?gid=0#gid=0", 
     icon: "vowel",
   },
 
@@ -853,7 +853,8 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", // Assuming this URL is correct
+    
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0", // Assuming this URL is correct
     icon: "microphone",
   },
 
@@ -899,7 +900,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1cYclzvhzGbFUoZLzxZonM9vwTo7wHQvvo_07NV7Ydr8/edit?gid=0#gid=0", 
     icon: "book",
   },
 
@@ -960,7 +961,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://example.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1UyyrGRA4dMjLREIONQiY7lFtwGiocY5vPEdCzoMxYRQ/edit?gid=0#gid=0", 
     icon: "camera",
   },
 };
@@ -1000,7 +1001,7 @@ const renderJsonCell = (value, type = "default") => {
 };
 const showimage = (value, type = "default") => {
   if (!value) return "-";
-debugger
+// debugger
 
   try {
     const data = typeof value === "string" ? JSON.parse(value) : value;

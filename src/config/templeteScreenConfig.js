@@ -487,7 +487,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   // New templates
   learningS2TTemplates: {
-    key: "learningS2TTemplates",
+    key: "learningS2TTemplate",
     header: "Sound to Text",
     columns: [
       {
@@ -533,7 +533,7 @@ export const TEMPLET_SCREEN_CONFIG = {
   },
 
   learningSlideTemplates: {
-    key: "learningSlideTemplates",
+    key: "learningSlideTemplate",
     header: "Learning Slides",
     columns: [
       {
@@ -604,7 +604,7 @@ export const TEMPLET_SCREEN_CONFIG = {
   },
 
   imageToLetterTemplates: {
-    key: "imageToLetterTemplates",
+    key: "imageToLetterTemplate",
     header: "Image to Letter",
     columns: [
       {
@@ -665,7 +665,7 @@ export const TEMPLET_SCREEN_CONFIG = {
   },
 
   fillTheVowelTemplates: {
-    key: "fillTheVowelTemplates",
+    key: "fillTheVowelTemplate",
     header: "Fill the Vowel",
     columns: [
  
@@ -726,9 +726,59 @@ export const TEMPLET_SCREEN_CONFIG = {
     icon: "vowel",
   },
 
-  // sayWordTemplates: {
-  //   key: "sayWordTemplates",
-  //   header: "Say Word",
+  
+
+  sayWordTemplates: {
+    key: "sayWordTemplate",
+    header: "Say Word",
+    columns: [
+      {
+        Header: "Key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "Question",
+        accessor: "question",
+        type: "string",
+      },
+      {
+        Header: "Word",
+        accessor: "word",
+        type: "string",
+      },
+      // {
+      //   Header: "Image",
+      //   accessor: "image",
+      //   type: "string",
+      //   Cell: ({ value }) => <img src={value} alt="Story" style={{ width: 100, height: 100 }} />,
+      // },
+      {
+        Header: "University",
+        accessor: "University.name",
+        type: "string",
+      },
+      {
+        Header: "Subject",
+        accessor: "Subject.name",
+        type: "string",
+      },
+      {
+        Header: "Grade",
+        accessor: "Grade.name",
+        type: "string",
+      },
+    ],
+    
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1cYclzvhzGbFUoZLzxZonM9vwTo7wHQvvo_07NV7Ydr8/edit?gid=0#gid=0", // Assuming this URL is correct
+    icon: "microphone",
+  },
+
+  
+
+  // storyTemplates: {
+  //   key: "storyTemplate",
+  //   header: "Story Templates",
   //   columns: [
   //     {
   //       Header: "Key",
@@ -741,15 +791,55 @@ export const TEMPLET_SCREEN_CONFIG = {
   //       type: "string",
   //     },
   //     {
-  //       Header: "Highlight Words",
-  //       accessor: "highlightedWords",
-  //       type: "string",
+  //       Header: "Layout",
+  //       accessor: "layout",
+  //       type: "array",
+  //       Cell: ({ value }) => {
+  //         if (!value || !Array.isArray(value)) {
+  //           return <div>No layout data available</div>;
+  //         }
+  //         return (
+  //           <div>
+  //             {value.map((scene, index) => (
+  //               <div key={index}>
+  //                 <p><strong>Scene {index + 1}:</strong> {scene.text}</p>
+  //                 {scene.assets && scene.assets.path && (
+  //                   <img src={scene.assets.path} alt={`Scene ${index + 1}`} style={{ width: 50, height: 50 }} />
+  //                 )}
+  //                 <p><strong>Highlighted Words:</strong> {scene.highlightedWords.join(", ")}</p>
+  //               </div>
+  //             ))}
+  //           </div>
+  //         );
+  //       },
   //     },
   //     {
-  //       Header: "Image",
+  //       Header: "Highlight Words",
+  //       accessor: "highlightedWords",
+  //       type: "array",
+  //       Cell: ({ value }) => {
+  //         if (!value || !Array.isArray(value)) {
+  //           return <div>No highlighted words available</div>;
+  //         }
+  //         return <div>{value.join(", ")}</div>;
+  //       },
+  //     },
+  //     {
+  //       Header: "Images",
   //       accessor: "images",
   //       type: "array",
-  //       Cell: ({ value }) => <img src={value} alt="Word" style={{ width: 50, height: 50 }} />,
+  //       Cell: ({ value }) => {
+  //         if (!value || !Array.isArray(value)) {
+  //           return <div>No images available</div>;
+  //         }
+  //         return (
+  //           <div>
+  //             {value.map((image, index) => (
+  //               <img key={index} src={image} alt={`Image ${index + 1}`} style={{ width: 50, height: 50 }} />
+  //             ))}
+  //           </div>
+  //         );
+  //       },
   //     },
   //     {
   //       Header: "University",
@@ -767,14 +857,13 @@ export const TEMPLET_SCREEN_CONFIG = {
   //       type: "string",
   //     },
   //   ],
-  //   importSampleFile: "https://example.com", 
-  //   icon: "microphone",
+  //   importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0", 
+  //   icon: "book",
   // },
 
-
-  sayWordTemplates: {
-    key: "sayWordTemplates",
-    header: "Say Word",
+  storyTemplates: {
+    key: "storyTemplate",
+    header: "Story Templates",
     columns: [
       {
         Header: "Key",
@@ -853,117 +942,14 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    
-    importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0", // Assuming this URL is correct
-    icon: "microphone",
-  },
-
-
-  storyTemplates: {
-    key: "storyTemplates",
-    header: "Story Templates",
-    columns: [
-      {
-        Header: "Key",
-        accessor: "key",
-        type: "string",
-      },
-      {
-        Header: "Question",
-        accessor: "question",
-        type: "string",
-      },
-      {
-        Header: "Word",
-        accessor: "word",
-        type: "string",
-      },
-      // {
-      //   Header: "Image",
-      //   accessor: "image",
-      //   type: "string",
-      //   Cell: ({ value }) => <img src={value} alt="Story" style={{ width: 100, height: 100 }} />,
-      // },
-      {
-        Header: "University",
-        accessor: "University.name",
-        type: "string",
-      },
-      {
-        Header: "Subject",
-        accessor: "Subject.name",
-        type: "string",
-      },
-      {
-        Header: "Grade",
-        accessor: "Grade.name",
-        type: "string",
-      },
-    ],
-    importSampleFile: "https://docs.google.com/spreadsheets/d/1cYclzvhzGbFUoZLzxZonM9vwTo7wHQvvo_07NV7Ydr8/edit?gid=0#gid=0", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0",
     icon: "book",
   },
 
-  imageMCQTemplates: {
-    key: "imageMCQTemplates",
-    header: "Image MCQ",
-    columns: [
-      {
-        Header: "Key",
-        accessor: "key",
-        type: "string",
-      },
-      {
-        Header: "English Title",
-        accessor: "engTitle",
-        type: "string",
-      },
-      {
-        Header: "Hindi Title",
-        accessor: "hinTitle",
-        type: "string",
-      },
-      {
-        Header: "Image",
-        accessor: "image",
-        type: "string",
-        Cell: ({ value }) => <img src={value} alt="Image" style={{ width: 100, height: 100 }} />,
-      },
-      {
-        Header: "Sound",
-        accessor: "sound",
-        type: "string",
-      },
-      {
-        Header: "Options",
-        accessor: "options",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Corrected Answer",
-        accessor: "correctAnswer",
-        type: "string",
-      },
-      {
-        Header: "University",
-        accessor: "University.name",
-        type: "string",
-      },
-      {
-        Header: "Subject",
-        accessor: "Subject.name",
-        type: "string",
-      },
-      {
-        Header: "Grade",
-        accessor: "Grade.name",
-        type: "string",
-      },
-    ],
-    importSampleFile: "https://docs.google.com/spreadsheets/d/1UyyrGRA4dMjLREIONQiY7lFtwGiocY5vPEdCzoMxYRQ/edit?gid=0#gid=0", 
-    icon: "camera",
-  },
+
+
+
+
 };
 
 

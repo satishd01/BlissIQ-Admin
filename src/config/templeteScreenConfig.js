@@ -45,9 +45,10 @@ export const TEMPLET_SCREEN_CONFIG = {
       "https://docs.google.com/spreadsheets/d/1BXPXNDXQBD57MWlNjKDrTXHpMF2tbbfCKRJogwT4VF8/edit?usp=drive_link", 
     icon: "rule",
   },
+
   mcqs: {
     key: "mcqs",
-    header: "MCQ Grids",
+    header: "Normal Mcqs",
     columns: [
       {
         Header: "Question",
@@ -107,7 +108,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   soundToImageTemplate: {
     key: "soundToImageTemplate",
-    header: "Sound To Image",
+    header: "Match Sound To Image",
     columns: [
       {
         Header: "English Question",
@@ -160,7 +161,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   numberReOrderTemplates: {
     key: "numberReOrderTemplates",
-    header: "Number Reorder",
+    header: "Re-arrange Activity",
     columns: [
       {
         Header: "Question",
@@ -208,7 +209,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   numberAscDesTemplate: {
     key: "numberAscDesTemplate",
-    header: "Number ASC DES",
+    header: "Number Ascending  Descending",
     columns: [
       {
         Header: "Question",
@@ -261,7 +262,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   learningFillNumberTemplate: {
     key: "learningFillNumberTemplate",
-    header: "Number ASC DES",
+    header: " Fill The Number",
     columns: [
       {
         Header: "Question",
@@ -381,7 +382,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   learningFillAplTemplate: {
     key: "learningFillAplTemplate",
-    header: "Fill Alphabet",
+    header: "Fill The Alphabet",
     columns: [
       {
         Header: "English Title",
@@ -434,7 +435,7 @@ export const TEMPLET_SCREEN_CONFIG = {
 
   learningW2WTemplate: {
     key: "learningW2WTemplate",
-    header: "Alphabet Letter to Letter",
+    header: "Match Word to Word",
     columns: [
       {
         Header: "English Question",
@@ -488,7 +489,7 @@ export const TEMPLET_SCREEN_CONFIG = {
   // New templates
   learningS2TTemplates: {
     key: "learningS2TTemplate",
-    header: "Sound to Text",
+    header: "Match Sound To word",
     columns: [
       {
         Header: "English Question",
@@ -532,80 +533,80 @@ export const TEMPLET_SCREEN_CONFIG = {
     icon: "volume-up",
   },
 
-  learningSlideTemplates: {
-    key: "learningSlideTemplate",
-    header: "Learning Slides",
-    columns: [
-      {
-        Header: "Key",
-        accessor: "key",
-        type: "string",
-      },
-      {
-        Header: "Capital Alphabet",
-        accessor: "capitalAlphabet",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Small Alphabet",
-        accessor: "smallAlphabet",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Hindi  Alphabet",
-        accessor: "hindiAlphabet",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "English Word",
-        accessor: "englishWord",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Hindi Phonetic-Word",
-        accessor: "hindiPhoneticWord",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Hindi Trasnalation",
-        accessor: "hindiTranslation",
-        type: "json",
-        Cell: ({ value }) => renderJsonCell(value, 'array'),
-      },
-      {
-        Header: "Word Image",
-        accessor: "wordImage",
-        type: "jsonarray",
-        Cell: ({ value }) => <img src={value} alt="Slide" style={{ width: 100, height: 100 }} />,
-      },
-      {
-        Header: "University",
-        accessor: "University.name",
-        type: "string",
-      },
-      {
-        Header: "Subject",
-        accessor: "Subject.name",
-        type: "string",
-      },
-      {
-        Header: "Grade",
-        accessor: "Grade.name",
-        type: "string",
-      },
-    ],
-    importSampleFile: "https://docs.google.com/spreadsheets/d/1Vkii3SCwgU_E9xfm2FXrgiziq8e7ihzIvqdeba_83Mw/edit?gid=0#gid=0", 
-    icon: "slide",
-  },
+  // learningSlideTemplates: {
+  //   key: "learningSlideTemplate",
+  //   header: "Learning Slides",
+  //   columns: [
+  //     {
+  //       Header: "Key",
+  //       accessor: "key",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Capital Alphabet",
+  //       accessor: "capitalAlphabet",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "Small Alphabet",
+  //       accessor: "smallAlphabet",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "Hindi  Alphabet",
+  //       accessor: "hindiAlphabet",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "English Word",
+  //       accessor: "englishWord",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "Hindi Phonetic-Word",
+  //       accessor: "hindiPhoneticWord",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "Hindi Trasnalation",
+  //       accessor: "hindiTranslation",
+  //       type: "json",
+  //       Cell: ({ value }) => renderJsonCell(value, 'array'),
+  //     },
+  //     {
+  //       Header: "Word Image",
+  //       accessor: "wordImage",
+  //       type: "jsonarray",
+  //       Cell: ({ value }) => <img src={value} alt="Slide" style={{ width: 100, height: 100 }} />,
+  //     },
+  //     {
+  //       Header: "University",
+  //       accessor: "University.name",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Subject",
+  //       accessor: "Subject.name",
+  //       type: "string",
+  //     },
+  //     {
+  //       Header: "Grade",
+  //       accessor: "Grade.name",
+  //       type: "string",
+  //     },
+  //   ],
+  //   importSampleFile: "https://docs.google.com/spreadsheets/d/1Vkii3SCwgU_E9xfm2FXrgiziq8e7ihzIvqdeba_83Mw/edit?gid=0#gid=0", 
+  //   icon: "slide",
+  // },
 
   imageToLetterTemplates: {
     key: "imageToLetterTemplate",
-    header: "Image to Letter",
+    header: "Match Image to Word",
     columns: [
       {
         Header: "Image",
@@ -660,7 +661,7 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://https://docs.google.com/spreadsheets/d/18HBeZ9xLeQBgI6v_OELkeyP-qQdthqLsSJeYm5XVz-k/edit?gid=0#gid=0.com", 
+    importSampleFile: "https://docs.google.com/spreadsheets/d/18HBeZ9xLeQBgI6v_OELkeyP-qQdthqLsSJeYm5XVz-k/edit?gid=0#gid=0", 
     icon: "image",
   },
 
@@ -697,13 +698,13 @@ export const TEMPLET_SCREEN_CONFIG = {
       {
         Header: "Questions",
         accessor: "questions",
-        type: "json",
+        type: "array",
         Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
         Header: "Options",
         accessor: "options",
-        type: "json",
+        type: "array",
         Cell: ({ value }) => renderJsonCell(value, 'array'),
       },
       {
@@ -724,6 +725,91 @@ export const TEMPLET_SCREEN_CONFIG = {
     ],
     importSampleFile: "https://docs.google.com/spreadsheets/d/1eJldr5TVAGjKFXImorJMC-stf1pNwD1TONzVHN-EoCs/edit?gid=0#gid=0", 
     icon: "vowel",
+  },
+
+  storyTemplates: {
+    key: "storyTemplate",
+    header: "Story Telling",
+    columns: [
+      {
+        Header: "Key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "Title",
+        accessor: "title",
+        type: "string",
+      },
+      {
+        Header: "Layout",
+        accessor: "layout",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No layout data available</div>;
+          }
+          return (
+            <div>
+              {value.map((scene, index) => (
+                <div key={index}>
+                  <p><strong>Scene {index + 1}:</strong> {scene.text}</p>
+                  {scene.assets && scene.assets.path && (
+                    <img src={scene.assets.path} alt={`Scene ${index + 1}`} style={{ width: 50, height: 50 }} />
+                  )}
+                  <p><strong>Highlighted Words:</strong> {scene.highlightedWords.join(", ")}</p>
+                </div>
+              ))}
+            </div>
+          );
+        },
+      },
+      {
+        Header: "Highlight Words",
+        accessor: "highlightedWords",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No highlighted words available</div>;
+          }
+          return <div>{value.join(", ")}</div>;
+        },
+      },
+      {
+        Header: "Images",
+        accessor: "images",
+        type: "array",
+        Cell: ({ value }) => {
+          if (!value || !Array.isArray(value)) {
+            return <div>No images available</div>;
+          }
+          return (
+            <div>
+              {value.map((image, index) => (
+                <img key={index} src={image} alt={`Image ${index + 1}`} style={{ width: 50, height: 50 }} />
+              ))}
+            </div>
+          );
+        },
+      },
+      {
+        Header: "University",
+        accessor: "University.name",
+        type: "string",
+      },
+      {
+        Header: "Subject",
+        accessor: "Subject.name",
+        type: "string",
+      },
+      {
+        Header: "Grade",
+        accessor: "Grade.name",
+        type: "string",
+      },
+    ],
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0",
+    icon: "book",
   },
 
   
@@ -861,9 +947,82 @@ export const TEMPLET_SCREEN_CONFIG = {
   //   icon: "book",
   // },
 
-  storyTemplates: {
-    key: "storyTemplate",
-    header: "Story Templates",
+ 
+  imageMCQTemplates: {
+    key: "imageMCQTemplate",
+    header: "MCQs with Image",
+    columns: [
+      {
+        Header: "index",
+        accessor: "index",
+        type: "string",
+      },
+      {
+        Header: "points",
+        accessor: "points",
+        type: "string",
+      },
+      {
+        Header: "key",
+        accessor: "key",
+        type: "string",
+      },
+      {
+        Header: "English Title",
+        accessor: "engTitle",
+        type: "string",
+      },
+      {
+        Header: "Hindi Title",
+        accessor: "hinTitle",
+        type: "string",
+      },
+      {
+        Header: "Image",
+        accessor: "image",
+        type: "string",
+        Cell: ({ value }) => <img src={value} alt="imagemcq" style={{ width: 100, height: 100 }} />,
+      },
+      {
+        Header: "Sound",
+        accessor: "sound",
+        type: "string",
+      },
+      {
+        Header: "Options",
+        accessor: "options",
+        type: "json",
+        Cell: ({ value }) => renderJsonCell(value, 'array'),
+      },
+      {
+        Header: "correct answer",
+        accessor: "correctAnswer",
+        type: "string",
+      },
+      {
+        Header: "University",
+        accessor: "University.name",
+        type: "string",
+      },
+      {
+        Header: "Subject",
+        accessor: "Subject.name",
+        type: "string",
+      },
+      {
+        Header: "Grade",
+        accessor: "Grade.name",
+        type: "string",
+      },
+    ],
+    
+    importSampleFile: "https://docs.google.com/spreadsheets/d/1UyyrGRA4dMjLREIONQiY7lFtwGiocY5vPEdCzoMxYRQ/edit?gid=0#gid=0", // Assuming this URL is correct
+    icon: "microphone",
+  },
+
+  flipCardTemplate: {
+    key: "flipCardTemplate",
+    header: "Flipping Card Activity",
     columns: [
       {
         Header: "Key",
@@ -871,43 +1030,19 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
       {
-        Header: "Title",
-        accessor: "title",
+        Header: "Points",
+        accessor: "points",
         type: "string",
       },
       {
-        Header: "Layout",
-        accessor: "layout",
-        type: "array",
-        Cell: ({ value }) => {
-          if (!value || !Array.isArray(value)) {
-            return <div>No layout data available</div>;
-          }
-          return (
-            <div>
-              {value.map((scene, index) => (
-                <div key={index}>
-                  <p><strong>Scene {index + 1}:</strong> {scene.text}</p>
-                  {scene.assets && scene.assets.path && (
-                    <img src={scene.assets.path} alt={`Scene ${index + 1}`} style={{ width: 50, height: 50 }} />
-                  )}
-                  <p><strong>Highlighted Words:</strong> {scene.highlightedWords.join(", ")}</p>
-                </div>
-              ))}
-            </div>
-          );
-        },
+        Header: "English Question",
+        accessor: "engQuestion",
+        type: "string",
       },
       {
-        Header: "Highlight Words",
-        accessor: "highlightedWords",
-        type: "array",
-        Cell: ({ value }) => {
-          if (!value || !Array.isArray(value)) {
-            return <div>No highlighted words available</div>;
-          }
-          return <div>{value.join(", ")}</div>;
-        },
+        Header: "Hindi Question",
+        accessor: "hinQuestion",
+        type: "string",
       },
       {
         Header: "Images",
@@ -942,11 +1077,9 @@ export const TEMPLET_SCREEN_CONFIG = {
         type: "string",
       },
     ],
-    importSampleFile: "https://docs.google.com/spreadsheets/d/1hgQ4yhsRIUQP_bocY3g3ZsatXtAgLQmbxs_Ctp1dWJw/edit?gid=0#gid=0",
+    importSampleFile: "https://docs.google.com/spreadsheets/d/13lDoUSZOLzj6hZhlq38UeUrmyRFNEf-wESB_dp1dGIw/edit?gid=0#gid=0",
     icon: "book",
   },
-
-
 
 
 

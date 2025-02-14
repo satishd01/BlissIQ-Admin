@@ -645,8 +645,6 @@ const ImportExportActions = ({
 };
 
 
-
-
 const NewTempletesScreen = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(Object.keys(TEMPLET_SCREEN_CONFIG)[0]);
   const [data, setData] = useState([]);
